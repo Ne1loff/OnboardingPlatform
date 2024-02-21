@@ -37,8 +37,13 @@ public class OnboardingBot extends AbilityBot {
                 .build();
     }
 
-    public Reply replyToButtons() {
+    public Reply replyToText() {
         BiConsumer<BaseAbilityBot, Update> action = (bot, upd) -> handler.replyToButtons(getChatId(upd), upd.getMessage());
         return Reply.of(action, Flag.TEXT, update -> handler.userIsActive(getChatId(update)));
+    }
+
+    public Reply replyToButtons() {
+        BiConsumer<BaseAbilityBot, Update> action = (bot, upd) -> handler.replyToButtons(getChatId(upd), upd.getCallbackQuery());
+        return Reply.of(action, Flag.CALLBACK_QUERY, update -> handler.userIsActive(getChatId(update)));
     }
 }
