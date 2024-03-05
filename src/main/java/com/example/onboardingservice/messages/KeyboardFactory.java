@@ -1,11 +1,12 @@
 package com.example.onboardingservice.messages;
 
+import com.example.onboardingservice.scenaries.actions.ActionButton;
+import com.example.onboardingservice.scenaries.utils.ButtonActionUtils;
+import com.google.common.collect.Lists;
 import lombok.experimental.UtilityClass;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -53,5 +54,27 @@ public class KeyboardFactory {
         }
 
         return new InlineKeyboardMarkup(buttons);
+    }
+
+    public InlineKeyboardMarkup createKeyboard(List<ActionButton> buttons, Long chatId, String scenarioId) {
+        var maxInRow = 3;
+        var inlineButtons = new LinkedList<List<InlineKeyboardButton>>();
+
+        var buttonsPartitions = Lists.partition(buttons, maxInRow);
+
+        for (var partition : buttonsPartitions) {
+
+            List<InlineKeyboardButton> buttonRow = new ArrayList<>(maxInRow);
+            for (var button : partition) {
+                var keyboardButton = InlineKeyboardButton.builder()
+                        .text(button.getText())
+                        .callbackData(ButtonActionUtils.generateButtonCallbackData(chatId, scenarioId, button.getActionId()))
+                        .build();
+                buttonRow.add(keyboardButton);
+            }
+            inlineButtons.add(buttonRow);
+        }
+
+        return new InlineKeyboardMarkup(inlineButtons);
     }
 }
