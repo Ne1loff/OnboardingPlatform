@@ -5,9 +5,7 @@ import com.example.onboardingservice.scenaries.actions.Action;
 
 import java.io.Serializable;
 
-public interface Context extends Serializable {
-
-    Long getChatId();
+public interface Context {
 
     Scenario getCurrentScenario();
 
