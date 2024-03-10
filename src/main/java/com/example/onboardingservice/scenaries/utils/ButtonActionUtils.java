@@ -1,6 +1,6 @@
 package com.example.onboardingservice.scenaries.utils;
 
-import com.example.onboardingservice.scenaries.model.CallbackData;
+import com.example.onboardingservice.scenaries.model.impl.CallbackData;
 import lombok.experimental.UtilityClass;
 
 import java.util.Optional;

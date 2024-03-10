@@ -2,7 +2,8 @@ package com.example.onboardingservice.scenaries.actions;
 
 import com.example.onboardingservice.messages.KeyboardFactory;
 import com.example.onboardingservice.messages.MessageFactory;
-import com.example.onboardingservice.scenaries.Context;
+import com.example.onboardingservice.scenaries.ActionContext;
+import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,20 +25,20 @@ public final class TextAction implements Action {
     private List<ActionButton> buttons;
 
     @Override
-    public void onUpdate(final Update update, final AbsSender sender, final Context context) throws TelegramApiException {
+    public void onUpdate(AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
         Long chatId = context.getChatId();
-        String scenarioId = context.getCurrentScenario().getId();
+        String scenarioId = metadata.getScenarioName();
 
         SendMessage message;
         if (hasButtons()) {
             var keyboard = KeyboardFactory.createKeyboard(buttons, chatId, scenarioId);
-            message = isMarkdownText ?
-                    MessageFactory.createSendMessageMDViaKeyboard(chatId, text, keyboard)
+            message = isMarkdownText
+                    ? MessageFactory.createSendMessageMDViaKeyboard(chatId, text, keyboard)
                     : MessageFactory.createSendMessageViaKeyboard(chatId, text, keyboard);
 
         } else {
-            message = isMarkdownText ?
-                    MessageFactory.createSendMessageMD(chatId, text)
+            message = isMarkdownText
+                    ? MessageFactory.createSendMessageMD(chatId, text)
                     : MessageFactory.createSendMessage(chatId, text);
         }
 

@@ -1,3 +1,4 @@
+/*
 package com.example.onboardingservice.commands;
 
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
@@ -12,3 +13,4 @@ public class StartCommand extends BotCommand {
         
     }
 }
+*/

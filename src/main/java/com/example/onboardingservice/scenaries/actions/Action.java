@@ -1,6 +1,7 @@
 package com.example.onboardingservice.scenaries.actions;
 
-import com.example.onboardingservice.scenaries.Context;
+import com.example.onboardingservice.scenaries.ActionContext;
+import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,5 +20,6 @@ public sealed interface Action extends Serializable permits TextAction {
 
     String getName();
 
-    void onUpdate(final Update update, final AbsSender sender, final Context context) throws TelegramApiException;
+    void onUpdate(final AbsSender sender, final Update update, final ActionContext context, final ScenariosMetadata metadata)
+            throws TelegramApiException;
 }

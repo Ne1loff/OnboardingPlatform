@@ -1,3 +1,4 @@
+/*
 package com.example.onboardingservice.handler;
 
 import com.example.onboardingservice.messages.KeyboardFactory;
@@ -132,3 +133,4 @@ public class ResponseHandler {
         return chatStates.containsKey(chatId);
     }
 }
+*/

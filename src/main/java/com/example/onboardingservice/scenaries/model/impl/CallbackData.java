@@ -1,4 +1,4 @@
-package com.example.onboardingservice.scenaries.model;
+package com.example.onboardingservice.scenaries.model.impl;
 
 import java.util.UUID;
 

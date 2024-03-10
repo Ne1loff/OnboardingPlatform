@@ -1,30 +1,14 @@
 package com.example.onboardingservice.scenaries;
 
 import com.example.onboardingservice.scenaries.actions.Action;
-import lombok.RequiredArgsConstructor;
-import org.jooq.DSLContext;
 
-import java.util.Optional;
-import java.util.UUID;
+public interface ScenarioService {
 
-@RequiredArgsConstructor
-public class ScenarioService {
+    ActionContext buildContext(Long chatId);
 
-    private final DSLContext jooq;
+    ScenariosMetadata initializeScenarios(ActionContext context);
 
-    public Optional<Context> findActiveScenarioContext(Long chatId) {
-        return
-    }
+    Action buildCurrentAction(ScenariosMetadata metadata, ActionContext context);
 
-    public Optional<Scenario> findScenarioByEntryEvent(String event) {
-
-    }
-
-    public Context createScenarioContext(Long chatId, Scenario scenario) {
-
-    }
-
-    public Action getAction(UUID id, Context context) {
-
-    }
+    ScenariosMetadata findActiveScenariosMetadata(Long chatId);
 }
