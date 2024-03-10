@@ -39,7 +39,7 @@ public class CodeGenTest {
                             .withDatabase(new Database()
                                     .withName("org.jooq.meta.postgres.PostgresDatabase")
                                     .withIncludes(".*")
-                                    .withExcludes("")
+                                    .withExcludes("_database.*")
                                     .withInputSchema("public"))
                             .withTarget(new Target()
                                     .withPackageName("com.example.onboardingservice.jooq")

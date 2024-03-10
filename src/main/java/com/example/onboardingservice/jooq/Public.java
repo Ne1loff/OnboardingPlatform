@@ -6,8 +6,6 @@ package com.example.onboardingservice.jooq;
 
 import com.example.onboardingservice.jooq.tables.Scenario;
 import com.example.onboardingservice.jooq.tables.ScenarioRouteDefinition;
-import com.example.onboardingservice.jooq.tables._Databasechangelog;
-import com.example.onboardingservice.jooq.tables._Databasechangeloglock;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,16 +27,6 @@ public class Public extends SchemaImpl {
      * The reference instance of <code>public</code>
      */
     public static final Public PUBLIC = new Public();
-
-    /**
-     * The table <code>public._databasechangelog</code>.
-     */
-    public final _Databasechangelog _DATABASECHANGELOG = _Databasechangelog._DATABASECHANGELOG;
-
-    /**
-     * The table <code>public._databasechangeloglock</code>.
-     */
-    public final _Databasechangeloglock _DATABASECHANGELOGLOCK = _Databasechangeloglock._DATABASECHANGELOGLOCK;
 
     /**
      * The table <code>public.scenario</code>.
@@ -66,8 +54,6 @@ public class Public extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
-            _Databasechangelog._DATABASECHANGELOG,
-            _Databasechangeloglock._DATABASECHANGELOGLOCK,
             Scenario.SCENARIO,
             ScenarioRouteDefinition.SCENARIO_ROUTE_DEFINITION
         );

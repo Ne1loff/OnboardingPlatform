@@ -6,10 +6,8 @@ package com.example.onboardingservice.jooq;
 
 import com.example.onboardingservice.jooq.tables.Scenario;
 import com.example.onboardingservice.jooq.tables.ScenarioRouteDefinition;
-import com.example.onboardingservice.jooq.tables._Databasechangeloglock;
 import com.example.onboardingservice.jooq.tables.records.ScenarioRecord;
 import com.example.onboardingservice.jooq.tables.records.ScenarioRouteDefinitionRecord;
-import com.example.onboardingservice.jooq.tables.records._DatabasechangeloglockRecord;
 
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -28,7 +26,6 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<_DatabasechangeloglockRecord> _DATABASECHANGELOGLOCK_PKEY = Internal.createUniqueKey(_Databasechangeloglock._DATABASECHANGELOGLOCK, DSL.name("_databasechangeloglock_pkey"), new TableField[] { _Databasechangeloglock._DATABASECHANGELOGLOCK.ID }, true);
     public static final UniqueKey<ScenarioRecord> SCENARIO_PKEY = Internal.createUniqueKey(Scenario.SCENARIO, DSL.name("scenario_pkey"), new TableField[] { Scenario.SCENARIO.ID }, true);
     public static final UniqueKey<ScenarioRouteDefinitionRecord> SCENARIO_ROUTE_DEFINITION_PKEY = Internal.createUniqueKey(ScenarioRouteDefinition.SCENARIO_ROUTE_DEFINITION, DSL.name("scenario_route_definition_pkey"), new TableField[] { ScenarioRouteDefinition.SCENARIO_ROUTE_DEFINITION.SCENARIO_NAME }, true);
 }
