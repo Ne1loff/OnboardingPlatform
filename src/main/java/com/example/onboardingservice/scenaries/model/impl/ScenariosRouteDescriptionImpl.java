@@ -6,10 +6,13 @@ import com.example.onboardingservice.scenaries.model.RouteMatcher;
 import com.example.onboardingservice.scenaries.model.ScenariosRouteDescription;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription {
 
     private String name;
+    private UUID firstActionId;
     private RouteMatcher[] matchers;
     private ScenariosRouteBlueprint route;
 
@@ -28,7 +31,10 @@ public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription 
                 continue;
             }
 
-            return ScenariosRouteImpl.build(route.getActions());
+            return ScenariosRouteImpl.builder()
+                    .withActions(route.getActions())
+                    .withCurrentActionId(firstActionId)
+                    .build();
         }
         return null;
     }

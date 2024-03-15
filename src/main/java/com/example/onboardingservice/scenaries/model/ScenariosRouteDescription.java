@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface ScenariosRouteDescription {
     String getName();
 
+    UUID getFirstActionId();
+
     RouteMatcher[] getMatchers();
 
     ScenariosRouteBlueprint getRoute();

@@ -63,7 +63,7 @@ public class Scenario extends TableImpl<ScenarioRecord> {
     /**
      * The column <code>public.scenario.chat_id</code>.
      */
-    public final TableField<ScenarioRecord, Integer> CHAT_ID = createField(DSL.name("chat_id"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<ScenarioRecord, Long> CHAT_ID = createField(DSL.name("chat_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.scenario.current_action_id</code>.
@@ -162,14 +162,14 @@ public class Scenario extends TableImpl<ScenarioRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<UUID, String, Integer, UUID, Boolean> fieldsRow() {
+    public Row5<UUID, String, Long, UUID, Boolean> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function5<? super UUID, ? super String, ? super Integer, ? super UUID, ? super Boolean, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function5<? super UUID, ? super String, ? super Long, ? super UUID, ? super Boolean, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -177,7 +177,7 @@ public class Scenario extends TableImpl<ScenarioRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super UUID, ? super String, ? super Integer, ? super UUID, ? super Boolean, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super UUID, ? super String, ? super Long, ? super UUID, ? super Boolean, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }
