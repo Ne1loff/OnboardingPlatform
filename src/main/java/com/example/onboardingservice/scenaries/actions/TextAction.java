@@ -4,6 +4,8 @@ import com.example.onboardingservice.messages.KeyboardFactory;
 import com.example.onboardingservice.messages.MessageFactory;
 import com.example.onboardingservice.scenaries.ActionContext;
 import com.example.onboardingservice.scenaries.ScenariosMetadata;
+import com.example.onboardingservice.scenaries.actions.AbstractAction;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,22 +14,20 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Getter
 @Setter
-public final class TextAction implements Action {
+public final class TextAction extends AbstractAction {
 
-    private UUID id;
-    private String name;
     private String text;
     private boolean isMarkdownText;
-    private List<ActionButton> buttons;
 
     @Override
     public void onUpdate(AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
-        Long chatId = context.getChatId();
-        String scenarioId = metadata.getScenarioName();
+        final Long chatId = context.getChatId();
+        final String scenarioId = metadata.getScenarioName();
 
         SendMessage message;
         if (hasButtons()) {
@@ -43,9 +43,5 @@ public final class TextAction implements Action {
         }
 
         sender.execute(message);
-    }
-
-    private boolean hasButtons() {
-        return !buttons.isEmpty();
     }
 }

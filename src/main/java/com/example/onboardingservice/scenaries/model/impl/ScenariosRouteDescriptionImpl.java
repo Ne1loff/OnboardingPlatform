@@ -2,7 +2,6 @@ package com.example.onboardingservice.scenaries.model.impl;
 
 import com.example.onboardingservice.scenaries.ActionContext;
 import com.example.onboardingservice.scenaries.ScenariosRoute;
-import com.example.onboardingservice.scenaries.model.RouteMatcher;
 import com.example.onboardingservice.scenaries.model.ScenariosRouteDescription;
 import lombok.Data;
 
@@ -32,7 +31,7 @@ public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription 
             }
 
             return ScenariosRouteImpl.builder()
-                    .withActions(route.getActions())
+                    .withActions(route.actions())
                     .withCurrentActionId(firstActionId)
                     .build();
         }

@@ -1,11 +1,11 @@
 package com.example.onboardingservice.config;
 
 import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.jooq.impl.DefaultExecuteListenerProvider;
-import org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
@@ -25,6 +25,7 @@ public class DatabaseConfiguration {
         var config = new DefaultConfiguration();
 
         config.set(connectionProvider);
+        config.set(SQLDialect.POSTGRES);
         config.set(new DefaultExecuteListenerProvider(new ExceptionTranslator()));
 
         return config;

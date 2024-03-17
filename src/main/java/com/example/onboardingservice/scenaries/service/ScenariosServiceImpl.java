@@ -12,6 +12,7 @@ import com.example.onboardingservice.utils.JooqUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import static com.example.onboardingservice.jooq.Tables.SCENARIO;
 import static com.example.onboardingservice.jooq.Tables.SCENARIO_ROUTE_DEFINITION;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class ScenariosServiceImpl implements ScenarioService {
 

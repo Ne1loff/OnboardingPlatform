@@ -1,11 +1,11 @@
 package com.example.onboardingservice.scenaries.controller;
 
 import com.example.onboardingservice.scenaries.ScenariosManager;
+import com.example.onboardingservice.scenaries.model.impl.ScenariosRouteDescriptionImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.RequestEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,8 +15,15 @@ public class ScenariosController {
     private final ScenariosManager scenariosManager;
 
     @PostMapping
-    public RequestEntity<Void> createScenarios() {
-        return null;
+    public ResponseEntity<Void> createScenarios(@RequestBody ScenariosRouteDescriptionImpl scenarios) {
+        scenariosManager.createScenarios(scenarios);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteScenarios(@RequestParam String scenariosName) {
+        scenariosManager.deleteScenarios(scenariosName);
+        return ResponseEntity.ok().build();
     }
 
 }
