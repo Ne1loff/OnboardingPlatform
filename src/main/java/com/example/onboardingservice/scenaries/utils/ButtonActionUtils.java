@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 @UtilityClass
 public class ButtonActionUtils {
@@ -23,9 +24,20 @@ public class ButtonActionUtils {
     public CallbackData parseButtonCallbackData(String data) {
         return Optional.ofNullable(data)
                 .map(it -> it.split(SPLITERATOR))
-                .filter(it -> it.length == 4)
-                .map(it -> new CallbackData(Long.parseLong(it[1]), it[2], UUID.fromString(it[3]), INIT_PREFIX.equals(it[0])))
+                .filter(lengthBetween(3, 4))
+                .map(ButtonActionUtils::mapToData)
                 .orElseThrow(IllegalStateException::new);
     }
 
+    private Predicate<String[]> lengthBetween(int left, int right) {
+        return (array) -> array.length >= left && array.length <= right;
+    }
+
+    private CallbackData mapToData(String[] data) {
+        if (data.length == 3) {
+            return new CallbackData(Long.parseLong(data[0]), data[1], UUID.fromString(data[2]), false);
+        } else {
+            return new CallbackData(Long.parseLong(data[1]), data[2], UUID.fromString(data[3]), INIT_PREFIX.equals(data[0]));
+        }
+    }
 }

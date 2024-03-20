@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Slf4j
 @Component
 public class OnboardingBot extends TelegramLongPollingBot {
@@ -45,6 +48,7 @@ public class OnboardingBot extends TelegramLongPollingBot {
             context.putParameter(ContextConstants.CHAT_ID, chatId);
             context.putParameter(ContextConstants.SCENARIOS_NAME, callbackData.scenariosName());
             context.putParameter(ContextConstants.ACTION_ID, callbackData.actionId());
+            context.putParameter(ContextConstants.NEED_INIT, callbackData.isInitScenarios());
             context.putParameter(ScenariosStartEventType.BUTTON.name(), messageText);
 
         } else {
@@ -58,14 +62,21 @@ public class OnboardingBot extends TelegramLongPollingBot {
         }
 
         metadata = scenarioService.findActiveScenariosMetadata(chatId);
+        var needInitScenarios = Optional.ofNullable(context.getParameters().get(ContextConstants.NEED_INIT))
+                .map(Boolean.class::cast)
+                .orElse(false);
 
         // meta == null => new chat
-        if (metadata == null || context.getParameters().get(ContextConstants.SCENARIOS_NAME) != null) {
+        if (metadata == null || needInitScenarios) {
             metadata = scenarioService.initializeScenarios(context);
         }
 
         var route = metadata.getRoute();
-        var action = route.current();
+        var action = Optional.ofNullable(context.getParameters().get(ContextConstants.ACTION_ID))
+                .map(UUID.class::cast)
+                .filter(route::hasAction)
+                .map(route::next)
+                .orElse(route.current());
 
         try {
             boolean hasNext;

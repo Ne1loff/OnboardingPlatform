@@ -1,9 +1,12 @@
 package com.example.onboardingservice.scenaries;
 
 import com.example.onboardingservice.scenaries.actions.Action;
+import com.example.onboardingservice.scenaries.model.impl.ScenariosRouteImpl;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.UUID;
 
+@JsonDeserialize(as = ScenariosRouteImpl.class)
 public interface ScenariosRoute {
 
     boolean hasAction(UUID actionId);

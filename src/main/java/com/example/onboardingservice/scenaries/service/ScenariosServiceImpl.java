@@ -1,13 +1,8 @@
 package com.example.onboardingservice.scenaries.service;
 
-import com.example.onboardingservice.scenaries.ActionContext;
-import com.example.onboardingservice.scenaries.ContextConstants;
-import com.example.onboardingservice.scenaries.ScenarioService;
-import com.example.onboardingservice.scenaries.ScenariosMetadata;
+import com.example.onboardingservice.scenaries.*;
 import com.example.onboardingservice.scenaries.model.ScenariosRouteDescription;
-import com.example.onboardingservice.scenaries.model.impl.ActionContextImpl;
-import com.example.onboardingservice.scenaries.model.impl.ScenariosMetadataImpl;
-import com.example.onboardingservice.scenaries.model.impl.ScenariosRouteDescriptionImpl;
+import com.example.onboardingservice.scenaries.model.impl.*;
 import com.example.onboardingservice.utils.JooqUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
@@ -50,9 +45,26 @@ public class ScenariosServiceImpl implements ScenarioService {
     @Nullable
     @Override
     public ScenariosMetadata findActiveScenariosMetadata(Long chatId) {
-        return jooq.selectFrom(SCENARIO)
+        var scenariosOpt = jooq.selectFrom(SCENARIO)
                 .where(SCENARIO.CHAT_ID.eq(chatId).and(SCENARIO.IS_ACTIVE))
-                .fetchOneInto(ScenariosMetadata.class);
+                .fetchOptional();
+        if (scenariosOpt.isEmpty()) {
+            return null;
+        }
+
+        var scenarios = scenariosOpt.get();
+        var route = jooq.select(SCENARIO_ROUTE_DEFINITION.ROUTE_SOURCE)
+                .from(SCENARIO_ROUTE_DEFINITION)
+                .where(SCENARIO_ROUTE_DEFINITION.SCENARIO_NAME.eq(scenarios.getScenarioName()))
+                .fetchOptional()
+                .map(it -> JooqUtils.fromJsonb(it.get(SCENARIO_ROUTE_DEFINITION.ROUTE_SOURCE), new TypeReference<ScenariosRouteBlueprint>() {}))
+                .map(it -> ScenariosRouteImpl.builder()
+                        .withActions(it.getActions())
+                        .withCurrentActionId(scenarios.getCurrentActionId())
+                        .build())
+                .orElseThrow();
+
+        return new ScenariosMetadataImpl(scenarios.getId(), scenarios.getScenarioName(), route);
     }
 
     @Override
@@ -85,8 +97,10 @@ public class ScenariosServiceImpl implements ScenarioService {
                     var routeDescription = new ScenariosRouteDescriptionImpl();
                     routeDescription.setName(it.getScenarioName());
                     routeDescription.setFirstActionId(it.getFirstActionId());
-                    routeDescription.setMatchers(JooqUtils.fromJsonb(it.getMatcher(), new TypeReference<>() {}));
-                    routeDescription.setRoute(JooqUtils.fromJsonb(it.getRouteSource(), new TypeReference<>() {}));
+                    routeDescription.setMatchers(JooqUtils.fromJsonb(it.getMatcher(), new TypeReference<>() {
+                    }));
+                    routeDescription.setRoute(JooqUtils.fromJsonb(it.getRouteSource(), new TypeReference<>() {
+                    }));
                     return (ScenariosRouteDescription) routeDescription;
                 }).toList();
     }

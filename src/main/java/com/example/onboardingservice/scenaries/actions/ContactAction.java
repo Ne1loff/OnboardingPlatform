@@ -21,7 +21,7 @@ public final class ContactAction extends AbstractAction {
         final Long chatId = context.getChatId();
         final String scenarioId = metadata.getScenarioName();
 
-        var message = new SendContact(userId.toString(), "Test", "Test");
+        var message = new SendContact(chatId.toString(), "88003553535", "Test" + userId);
         sender.execute(message);
     }
 }
