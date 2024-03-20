@@ -9,7 +9,7 @@ import org.jooq.JSONB;
 @UtilityClass
 public class JooqUtils {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @SneakyThrows
     public JSONB toJsonb(Object object) {
@@ -17,8 +17,8 @@ public class JooqUtils {
     }
 
     @SneakyThrows
-    public <T> T fromJsonb(JSONB jsonb) {
-        return MAPPER.readValue(jsonb.data(), new TypeReference<>() {});
+    public <T> T fromJsonb(JSONB jsonb, TypeReference<T> typeReference) {
+        return MAPPER.readValue(jsonb.data(), typeReference);
     }
 
 }

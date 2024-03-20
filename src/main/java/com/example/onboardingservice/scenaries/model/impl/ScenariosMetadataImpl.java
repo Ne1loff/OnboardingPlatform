@@ -13,10 +13,7 @@ public class ScenariosMetadataImpl implements ScenariosMetadata {
     @Getter
     private final UUID scenarioId;
     @Getter
+    private final String scenarioName;
+    @Getter
     private final ScenariosRoute route;
-
-    @Override
-    public String getScenarioName() {
-        return null;
-    }
 }

@@ -4,7 +4,7 @@ import com.example.onboardingservice.scenaries.ScenariosRoute;
 import com.example.onboardingservice.scenaries.actions.Action;
 import lombok.AllArgsConstructor;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -46,8 +46,8 @@ public class ScenariosRouteImpl implements ScenariosRoute {
         private UUID currentActionId;
         private Map<UUID, Action> actions;
 
-        public ScenariosRouteImplBuilder withActions(Action[] actions) {
-            this.actions = Arrays.stream(actions).collect(Collectors.toMap(Action::getId, Function.identity()));
+        public ScenariosRouteImplBuilder withActions(List<Action> actions) {
+            this.actions = actions.stream().collect(Collectors.toMap(Action::getId, Function.identity()));
             return this;
         }
 

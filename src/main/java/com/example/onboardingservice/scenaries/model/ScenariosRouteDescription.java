@@ -5,6 +5,7 @@ import com.example.onboardingservice.scenaries.ScenariosRoute;
 import com.example.onboardingservice.scenaries.model.impl.RouteMatcher;
 import com.example.onboardingservice.scenaries.model.impl.ScenariosRouteBlueprint;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ScenariosRouteDescription {
@@ -12,7 +13,7 @@ public interface ScenariosRouteDescription {
 
     UUID getFirstActionId();
 
-    RouteMatcher[] getMatchers();
+    List<RouteMatcher> getMatchers();
 
     ScenariosRouteBlueprint getRoute();
 
