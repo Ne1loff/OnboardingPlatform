@@ -11,20 +11,15 @@ import java.util.function.Predicate;
 public class ButtonActionUtils {
 
     private static final String SPLITERATOR = "_";
-    private static final String INIT_PREFIX = "init";
 
-    public String generateButtonCallbackData(Long chatId, String scenarioId, UUID actionId) {
-        return "%d_%s_%s".formatted(chatId, scenarioId, actionId);
-    }
-
-    public String generateInitButtonCallbackData(Long chatId, String scenarioId, UUID actionId) {
-        return "%s_%d_%s_%s".formatted(INIT_PREFIX, chatId, scenarioId, actionId);
+    public String generateButtonCallbackData(Long chatId, UUID actionId) {
+        return "%d_%s".formatted(chatId, actionId);
     }
 
     public CallbackData parseButtonCallbackData(String data) {
         return Optional.ofNullable(data)
                 .map(it -> it.split(SPLITERATOR))
-                .filter(lengthBetween(3, 4))
+                .filter(lengthBetween(2, 2))
                 .map(ButtonActionUtils::mapToData)
                 .orElseThrow(IllegalStateException::new);
     }
@@ -34,10 +29,6 @@ public class ButtonActionUtils {
     }
 
     private CallbackData mapToData(String[] data) {
-        if (data.length == 3) {
-            return new CallbackData(Long.parseLong(data[0]), data[1], UUID.fromString(data[2]), false);
-        } else {
-            return new CallbackData(Long.parseLong(data[1]), data[2], UUID.fromString(data[3]), INIT_PREFIX.equals(data[0]));
-        }
+        return new CallbackData(Long.parseLong(data[0]), UUID.fromString(data[1]));
     }
 }

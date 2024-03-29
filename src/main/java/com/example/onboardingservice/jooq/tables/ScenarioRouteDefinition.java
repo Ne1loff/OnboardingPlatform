@@ -7,27 +7,14 @@ package com.example.onboardingservice.jooq.tables;
 import com.example.onboardingservice.jooq.Keys;
 import com.example.onboardingservice.jooq.Public;
 import com.example.onboardingservice.jooq.tables.records.ScenarioRouteDefinitionRecord;
-
-import java.util.UUID;
-import java.util.function.Function;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Function4;
-import org.jooq.JSONB;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Records;
-import org.jooq.Row4;
-import org.jooq.Schema;
-import org.jooq.SelectField;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
+import java.util.UUID;
+import java.util.function.Function;
 
 
 /**
@@ -57,6 +44,11 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
     public final TableField<ScenarioRouteDefinitionRecord, String> SCENARIO_NAME = createField(DSL.name("scenario_name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
+     * The column <code>public.scenario_route_definition.first_action_id</code>.
+     */
+    public final TableField<ScenarioRouteDefinitionRecord, UUID> FIRST_ACTION_ID = createField(DSL.name("first_action_id"), SQLDataType.UUID.nullable(false), this, "");
+
+    /**
      * The column <code>public.scenario_route_definition.route_source</code>.
      */
     public final TableField<ScenarioRouteDefinitionRecord, JSONB> ROUTE_SOURCE = createField(DSL.name("route_source"), SQLDataType.JSONB.nullable(false), this, "");
@@ -65,11 +57,6 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
      * The column <code>public.scenario_route_definition.matcher</code>.
      */
     public final TableField<ScenarioRouteDefinitionRecord, JSONB> MATCHER = createField(DSL.name("matcher"), SQLDataType.JSONB.nullable(false), this, "");
-
-    /**
-     * The column <code>public.scenario_route_definition.first_action_id</code>.
-     */
-    public final TableField<ScenarioRouteDefinitionRecord, UUID> FIRST_ACTION_ID = createField(DSL.name("first_action_id"), SQLDataType.UUID.nullable(false), this, "");
 
     private ScenarioRouteDefinition(Name alias, Table<ScenarioRouteDefinitionRecord> aliased) {
         this(alias, aliased, null);
@@ -160,14 +147,14 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<String, JSONB, JSONB, UUID> fieldsRow() {
+    public Row4<String, UUID, JSONB, JSONB> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super String, ? super JSONB, ? super JSONB, ? super UUID, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function4<? super String, ? super UUID, ? super JSONB, ? super JSONB, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -175,7 +162,7 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super String, ? super JSONB, ? super JSONB, ? super UUID, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super String, ? super UUID, ? super JSONB, ? super JSONB, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

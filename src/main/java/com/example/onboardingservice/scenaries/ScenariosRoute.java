@@ -9,6 +9,8 @@ import java.util.UUID;
 @JsonDeserialize(as = ScenariosRouteImpl.class)
 public interface ScenariosRoute {
 
+    UUID getFirstActionId();
+
     boolean hasAction(UUID actionId);
 
     Action next(UUID actionId);

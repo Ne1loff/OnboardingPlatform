@@ -15,7 +15,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -45,11 +44,9 @@ public class OnboardingBot extends TelegramLongPollingBot {
             chatId = callbackData.chatId();
             context = scenarioService.buildContext(chatId);
 
-            context.putParameter(ContextConstants.CHAT_ID, chatId);
-            context.putParameter(ContextConstants.SCENARIOS_NAME, callbackData.scenariosName());
-            context.putParameter(ContextConstants.ACTION_ID, callbackData.actionId());
-            context.putParameter(ContextConstants.NEED_INIT, callbackData.isInitScenarios());
-            context.putParameter(ScenariosStartEventType.BUTTON.name(), messageText);
+            context.put(ContextConstants.CHAT_ID, chatId);
+            context.put(ContextConstants.ACTION_ID, callbackData.actionId());
+            context.put(ScenariosStartEventType.BUTTON.name(), messageText);
 
         } else {
             final var messageText = update.getMessage().getText();
@@ -58,22 +55,19 @@ public class OnboardingBot extends TelegramLongPollingBot {
             context = scenarioService.buildContext(chatId);
 
             var eventType = InitScenariosCommandUtils.parseEventType(messageText);
-            context.putParameter(eventType.name(), messageText);
+            context.put(eventType.name(), messageText);
         }
 
         metadata = scenarioService.findActiveScenariosMetadata(chatId);
-        var needInitScenarios = Optional.ofNullable(context.getParameters().get(ContextConstants.NEED_INIT))
-                .map(Boolean.class::cast)
-                .orElse(false);
-
         // meta == null => new chat
-        if (metadata == null || needInitScenarios) {
+        if (metadata == null) {
             metadata = scenarioService.initializeScenarios(context);
+        } else {
+            context.restore(scenarioService.findActiveContext(chatId));
         }
 
         var route = metadata.getRoute();
-        var action = Optional.ofNullable(context.getParameters().get(ContextConstants.ACTION_ID))
-                .map(UUID.class::cast)
+        var action = Optional.ofNullable(context.get(ContextConstants.ACTION_ID))
                 .filter(route::hasAction)
                 .map(route::next)
                 .orElse(route.current());
@@ -81,7 +75,7 @@ public class OnboardingBot extends TelegramLongPollingBot {
         try {
             boolean hasNext;
             do {
-                context.putParameter(ContextConstants.ACTION_ID, action.getId());
+                context.put(ContextConstants.ACTION_ID, action.getId());
                 scenarioService.saveScenariosMetadata(context, metadata);
 
                 action.onUpdate(this, update, context, metadata);
@@ -89,6 +83,15 @@ public class OnboardingBot extends TelegramLongPollingBot {
                 hasNext = action.getNextActionId().isPresent() && route.hasAction(action.getNextActionId().get());
                 if (hasNext) {
                     action = route.next(action.getNextActionId().get());
+                }
+
+                if (context.containsKey(ContextConstants.NEED_INIT) && context.get(ContextConstants.NEED_INIT)) {
+                    context.put(ContextConstants.ACTION_ID, action.getId());
+
+                    metadata = scenarioService.changeScenarios(context, metadata);
+                    context = scenarioService.findActiveContext(context.getChatId());
+                    route = metadata.getRoute();
+                    action = route.current();
                 }
             } while (hasNext);
         } catch (Exception exception) {

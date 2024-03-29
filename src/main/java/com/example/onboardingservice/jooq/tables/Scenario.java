@@ -7,26 +7,14 @@ package com.example.onboardingservice.jooq.tables;
 import com.example.onboardingservice.jooq.Keys;
 import com.example.onboardingservice.jooq.Public;
 import com.example.onboardingservice.jooq.tables.records.ScenarioRecord;
-
-import java.util.UUID;
-import java.util.function.Function;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Function5;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Records;
-import org.jooq.Row5;
-import org.jooq.Schema;
-import org.jooq.SelectField;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
+import java.util.UUID;
+import java.util.function.Function;
 
 
 /**
@@ -74,6 +62,16 @@ public class Scenario extends TableImpl<ScenarioRecord> {
      * The column <code>public.scenario.is_active</code>.
      */
     public final TableField<ScenarioRecord, Boolean> IS_ACTIVE = createField(DSL.name("is_active"), SQLDataType.BOOLEAN.nullable(false), this, "");
+
+    /**
+     * The column <code>public.scenario.first_action_id</code>.
+     */
+    public final TableField<ScenarioRecord, UUID> FIRST_ACTION_ID = createField(DSL.name("first_action_id"), SQLDataType.UUID.nullable(false), this, "");
+
+    /**
+     * The column <code>public.scenario.context</code>.
+     */
+    public final TableField<ScenarioRecord, JSONB> CONTEXT = createField(DSL.name("context"), SQLDataType.JSONB, this, "");
 
     private Scenario(Name alias, Table<ScenarioRecord> aliased) {
         this(alias, aliased, null);
@@ -158,18 +156,18 @@ public class Scenario extends TableImpl<ScenarioRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row7 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<UUID, String, Long, UUID, Boolean> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row7<UUID, String, Long, UUID, Boolean, UUID, JSONB> fieldsRow() {
+        return (Row7) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function5<? super UUID, ? super String, ? super Long, ? super UUID, ? super Boolean, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function7<? super UUID, ? super String, ? super Long, ? super UUID, ? super Boolean, ? super UUID, ? super JSONB, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -177,7 +175,7 @@ public class Scenario extends TableImpl<ScenarioRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super UUID, ? super String, ? super Long, ? super UUID, ? super Boolean, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function7<? super UUID, ? super String, ? super Long, ? super UUID, ? super Boolean, ? super UUID, ? super JSONB, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

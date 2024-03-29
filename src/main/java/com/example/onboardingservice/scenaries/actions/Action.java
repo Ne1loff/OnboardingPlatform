@@ -17,8 +17,9 @@ import java.util.UUID;
 @JsonSubTypes({
         @Type(value = TextAction.class),
         @Type(value = ContactAction.class),
+        @Type(value = ChangeScenariosAction.class),
 })
-public sealed interface Action extends Serializable permits AbstractAction {
+public sealed interface Action extends Serializable permits AbstractAction, ChangeScenariosAction {
 
     UUID getId();
 

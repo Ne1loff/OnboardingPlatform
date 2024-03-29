@@ -19,11 +19,11 @@ public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription 
 
     @Override
     public ScenariosRoute build(ActionContext context) {
-        var parameters = context.getParameters();
 
-        if (parameters.containsKey(ContextConstants.SCENARIOS_NAME)) {
-            if (parameters.get(ContextConstants.SCENARIOS_NAME).equals(name)) {
+        if (context.containsKey(ContextConstants.SCENARIOS_NAME)) {
+            if (context.get(ContextConstants.SCENARIOS_NAME).equals(name)) {
                 return ScenariosRouteImpl.builder()
+                        .withFirstActionId(firstActionId)
                         .withActions(route.getActions())
                         .withCurrentActionId(firstActionId)
                         .build();
@@ -35,15 +35,16 @@ public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription 
         for (RouteMatcher matcher : matchers) {
             var type = matcher.getType();
 
-            if (!parameters.containsKey(type.name())) {
+            if (!context.containsKey(type.name())) {
                 continue;
             }
 
-            if (!parameters.get(type.name()).equals(matcher.getValue())) {
+            if (!context.get(type.name()).equals(matcher.getValue())) {
                 continue;
             }
 
             return ScenariosRouteImpl.builder()
+                    .withFirstActionId(firstActionId)
                     .withActions(route.getActions())
                     .withCurrentActionId(firstActionId)
                     .build();

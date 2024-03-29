@@ -13,11 +13,17 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ScenariosRouteImpl implements ScenariosRoute {
 
+    private UUID firstActionId;
     private UUID currentActionId;
     private Map<UUID, Action> actions;
 
     public static ScenariosRouteImplBuilder builder() {
         return new ScenariosRouteImplBuilder();
+    }
+
+    @Override
+    public UUID getFirstActionId() {
+        return firstActionId;
     }
 
     @Override
@@ -43,11 +49,17 @@ public class ScenariosRouteImpl implements ScenariosRoute {
 
     public static class ScenariosRouteImplBuilder {
 
+        private UUID firstActionId;
         private UUID currentActionId;
         private Map<UUID, Action> actions;
 
         public ScenariosRouteImplBuilder withActions(List<Action> actions) {
             this.actions = actions.stream().collect(Collectors.toMap(Action::getId, Function.identity()));
+            return this;
+        }
+
+        public ScenariosRouteImplBuilder withFirstActionId(UUID actionId) {
+            this.firstActionId = actionId;
             return this;
         }
 
@@ -57,7 +69,7 @@ public class ScenariosRouteImpl implements ScenariosRoute {
         }
 
         public ScenariosRoute build() {
-            return new ScenariosRouteImpl(currentActionId, actions);
+            return new ScenariosRouteImpl(firstActionId, currentActionId, actions);
         }
 
     }

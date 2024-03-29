@@ -56,7 +56,7 @@ public class KeyboardFactory {
         return new InlineKeyboardMarkup(buttons);
     }
 
-    public InlineKeyboardMarkup createKeyboard(List<ActionButton> buttons, Long chatId, String scenarioId) {
+    public InlineKeyboardMarkup createKeyboard(List<ActionButton> buttons, Long chatId) {
         var maxInRow = 3;
         var inlineButtons = new LinkedList<List<InlineKeyboardButton>>();
 
@@ -68,7 +68,7 @@ public class KeyboardFactory {
             for (var button : partition) {
                 var keyboardButton = InlineKeyboardButton.builder()
                         .text(button.getText())
-                        .callbackData(ButtonActionUtils.generateButtonCallbackData(chatId, scenarioId, button.getActionId()))
+                        .callbackData(ButtonActionUtils.generateButtonCallbackData(chatId, button.getActionId()))
                         .build();
                 buttonRow.add(keyboardButton);
             }
