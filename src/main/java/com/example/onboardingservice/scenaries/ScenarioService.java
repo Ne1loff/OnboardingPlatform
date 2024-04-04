@@ -13,7 +13,6 @@ public interface ScenarioService {
     @Nullable
     ScenariosMetadata findActiveScenariosMetadata(Long chatId);
 
-    @NotNull
     ActionContext findActiveContext(Long chatId);
 
     void saveScenariosMetadata(ActionContext context, ScenariosMetadata metadata);

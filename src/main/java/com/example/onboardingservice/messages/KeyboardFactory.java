@@ -1,6 +1,6 @@
 package com.example.onboardingservice.messages;
 
-import com.example.onboardingservice.scenaries.actions.ActionButton;
+import com.example.onboardingservice.scenaries.model.impl.ActionButton;
 import com.example.onboardingservice.scenaries.utils.ButtonActionUtils;
 import com.google.common.collect.Lists;
 import lombok.experimental.UtilityClass;

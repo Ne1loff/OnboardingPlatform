@@ -1,4 +1,4 @@
-package com.example.onboardingservice.scenaries.actions;
+package com.example.onboardingservice.scenaries.model.impl;
 
 import lombok.Getter;
 import lombok.Setter;

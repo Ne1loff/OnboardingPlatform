@@ -57,13 +57,12 @@ public class ScenariosServiceImpl implements ScenarioService {
     }
 
     @Override
-    @NotNull
     public ActionContext findActiveContext(Long chatId) {
         return jooq.select(SCENARIO.CONTEXT).from(SCENARIO)
                 .where(SCENARIO.CHAT_ID.eq(chatId).and(SCENARIO.IS_ACTIVE))
                 .fetchOptional()
                 .map(it -> JooqUtils.fromJsonb(it.get(SCENARIO.CONTEXT), new TypeReference<ActionContextImpl>() {}))
-                .orElseThrow();
+                .orElse(null);
     }
 
     @Override
@@ -73,11 +72,11 @@ public class ScenariosServiceImpl implements ScenarioService {
                 .set(SCENARIO.SCENARIO_NAME, metadata.getScenarioName())
                 .set(SCENARIO.CHAT_ID, context.getChatId())
                 .set(SCENARIO.FIRST_ACTION_ID, metadata.getRoute().getFirstActionId())
-                .set(SCENARIO.CURRENT_ACTION_ID, context.get(ContextConstants.ACTION_ID))
+                .set(SCENARIO.CURRENT_ACTION_ID, UUID.fromString(context.get(ContextConstants.ACTION_ID)))
                 .set(SCENARIO.CONTEXT, JooqUtils.toJsonb(context))
                 .set(SCENARIO.IS_ACTIVE, true)
                 .onDuplicateKeyUpdate()
-                .set(SCENARIO.CURRENT_ACTION_ID, context.get(ContextConstants.ACTION_ID))
+                .set(SCENARIO.CURRENT_ACTION_ID, UUID.fromString(context.get(ContextConstants.ACTION_ID)))
                 .set(SCENARIO.CONTEXT, JooqUtils.toJsonb(context))
                 .set(SCENARIO.IS_ACTIVE, true)
                 .execute();
@@ -86,7 +85,7 @@ public class ScenariosServiceImpl implements ScenarioService {
     @Override
     public ScenariosMetadata changeScenarios(ActionContext context, ScenariosMetadata metadata) {
         jooq.update(SCENARIO)
-                .set(SCENARIO.CURRENT_ACTION_ID, context.get(ContextConstants.ACTION_ID))
+                .set(SCENARIO.CURRENT_ACTION_ID, UUID.fromString(context.get(ContextConstants.ACTION_ID)))
                 .set(SCENARIO.CONTEXT, JooqUtils.toJsonb(context))
                 .set(SCENARIO.IS_ACTIVE, false)
                 .where(SCENARIO.ID.eq(metadata.getScenarioId()))
@@ -97,10 +96,15 @@ public class ScenariosServiceImpl implements ScenarioService {
 
         if (newScenariosMetadata == null) {
             newScenariosMetadata = initializeScenarios(context);
-        } else if (Optional.ofNullable(context.get(ContextConstants.START_FROM_BEGIN)).orElse(false)) {
+        } else if (Optional.ofNullable(context.get(ContextConstants.START_FROM_BEGIN)).map(Boolean::parseBoolean).orElse(false)) {
             var route = newScenariosMetadata.getRoute();
             route.next(route.getFirstActionId());
         }
+
+        jooq.update(SCENARIO)
+                .set(SCENARIO.IS_ACTIVE, true)
+                .where(SCENARIO.ID.eq(newScenariosMetadata.getScenarioId()))
+                .execute();
 
         return newScenariosMetadata;
     }
