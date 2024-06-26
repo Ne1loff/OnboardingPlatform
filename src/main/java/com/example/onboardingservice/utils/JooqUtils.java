@@ -21,4 +21,9 @@ public class JooqUtils {
         return MAPPER.readValue(jsonb.data(), typeReference);
     }
 
+    @SneakyThrows
+    public <T> T fromJsonb(JSONB jsonb, Class<T> typeClass) {
+        return MAPPER.readValue(jsonb.data(), typeClass);
+    }
+
 }

@@ -20,7 +20,11 @@ public class ForwardMessageActionHandler implements ActionHandler<ForwardMessage
     }
 
     @Override
-    public Optional<UUID> process(ForwardMessageAction action, AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
+    public Optional<UUID> process(ForwardMessageAction action,
+                                  AbsSender sender,
+                                  Update update,
+                                  ActionContext context,
+                                  ScenariosMetadata metadata) throws TelegramApiException {
         final Long chatId = context.getChatId();
 
         var message = ForwardMessage.builder()

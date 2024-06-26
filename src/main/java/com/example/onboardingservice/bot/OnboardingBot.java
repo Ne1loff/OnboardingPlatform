@@ -1,6 +1,6 @@
 package com.example.onboardingservice.bot;
 
-import com.example.onboardingservice.config.TelegramBotProperties;
+import com.example.onboardingservice.config.properties.TelegramBotProperties;
 import com.example.onboardingservice.scenaries.ActionContext;
 import com.example.onboardingservice.scenaries.ContextConstants;
 import com.example.onboardingservice.scenaries.ScenarioService;

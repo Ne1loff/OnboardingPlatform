@@ -1,4 +1,4 @@
-package com.example.onboardingservice.messages;
+package com.example.onboardingservice.bot.messages;
 
 import lombok.experimental.UtilityClass;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

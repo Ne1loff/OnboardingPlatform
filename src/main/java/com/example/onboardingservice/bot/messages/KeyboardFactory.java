@@ -1,4 +1,4 @@
-package com.example.onboardingservice.messages;
+package com.example.onboardingservice.bot.messages;
 
 import com.example.onboardingservice.scenaries.model.impl.ActionButton;
 import com.example.onboardingservice.scenaries.utils.ButtonActionUtils;

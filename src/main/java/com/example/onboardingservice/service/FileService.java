@@ -1,6 +1,6 @@
 package com.example.onboardingservice.service;
 
-import com.example.onboardingservice.config.S3FileStorageProperties;
+import com.example.onboardingservice.config.properties.S3FileStorageProperties;
 import com.example.onboardingservice.model.FileData;
 import com.example.onboardingservice.model.FileMetadata;
 import lombok.RequiredArgsConstructor;

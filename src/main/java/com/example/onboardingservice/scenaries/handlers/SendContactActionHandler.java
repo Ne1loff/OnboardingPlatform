@@ -20,7 +20,11 @@ public class SendContactActionHandler implements ActionHandler<SendContactAction
     }
 
     @Override
-    public Optional<UUID> process(SendContactAction action, AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
+    public Optional<UUID> process(SendContactAction action,
+                                  AbsSender sender,
+                                  Update update,
+                                  ActionContext context,
+                                  ScenariosMetadata metadata) throws TelegramApiException {
         final Long chatId = context.getChatId();
 
         var message = SendContact.builder()

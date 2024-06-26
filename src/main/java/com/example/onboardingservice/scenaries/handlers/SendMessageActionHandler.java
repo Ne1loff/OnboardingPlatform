@@ -1,7 +1,7 @@
 package com.example.onboardingservice.scenaries.handlers;
 
-import com.example.onboardingservice.messages.KeyboardFactory;
-import com.example.onboardingservice.messages.MessageFactory;
+import com.example.onboardingservice.bot.messages.KeyboardFactory;
+import com.example.onboardingservice.bot.messages.MessageFactory;
 import com.example.onboardingservice.scenaries.ActionContext;
 import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import com.example.onboardingservice.scenaries.actions.impl.SendMessageAction;
@@ -26,7 +26,11 @@ public class SendMessageActionHandler implements ActionHandler<SendMessageAction
     }
 
     @Override
-    public Optional<UUID> process(SendMessageAction action, AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
+    public Optional<UUID> process(SendMessageAction action,
+                                  AbsSender sender,
+                                  Update update,
+                                  ActionContext context,
+                                  ScenariosMetadata metadata) throws TelegramApiException {
         final Long chatId = context.getChatId();
 
         SendMessage message;

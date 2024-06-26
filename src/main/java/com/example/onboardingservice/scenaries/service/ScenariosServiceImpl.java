@@ -61,7 +61,7 @@ public class ScenariosServiceImpl implements ScenarioService {
         return jooq.select(SCENARIO.CONTEXT).from(SCENARIO)
                 .where(SCENARIO.CHAT_ID.eq(chatId).and(SCENARIO.IS_ACTIVE))
                 .fetchOptional()
-                .map(it -> JooqUtils.fromJsonb(it.get(SCENARIO.CONTEXT), new TypeReference<ActionContextImpl>() {}))
+                .map(it -> JooqUtils.fromJsonb(it.get(SCENARIO.CONTEXT), ActionContextImpl.class))
                 .orElse(null);
     }
 
@@ -122,8 +122,7 @@ public class ScenariosServiceImpl implements ScenarioService {
                 .where(SCENARIO_ROUTE_DEFINITION.SCENARIO_NAME.eq(scenarios.getScenarioName()))
                 .fetchOptional().orElseThrow();
 
-        var routeBlueprint = JooqUtils.fromJsonb(record.get(SCENARIO_ROUTE_DEFINITION.ROUTE_SOURCE), new TypeReference<ScenariosRouteBlueprint>() {
-        });
+        var routeBlueprint = JooqUtils.fromJsonb(record.get(SCENARIO_ROUTE_DEFINITION.ROUTE_SOURCE), ScenariosRouteBlueprint.class);
         var route = ScenariosRouteImpl.builder()
                 .withFirstActionId(record.get(SCENARIO_ROUTE_DEFINITION.FIRST_ACTION_ID))
                 .withActions(routeBlueprint.getActions())

@@ -14,6 +14,10 @@ public interface ActionHandler<T extends Action> {
 
     Class<T> getHandledClass();
 
-    Optional<UUID> process(T action, AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException;
+    Optional<UUID> process(T action,
+                           AbsSender sender,
+                           Update update,
+                           ActionContext context,
+                           ScenariosMetadata metadata) throws TelegramApiException;
 
 }

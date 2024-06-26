@@ -1,4 +1,4 @@
-package com.example.onboardingservice.config;
+package com.example.onboardingservice.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;

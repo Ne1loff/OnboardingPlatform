@@ -27,7 +27,11 @@ public class SendFileActionHandler implements ActionHandler<SendFileAction> {
     }
 
     @Override
-    public Optional<UUID> process(SendFileAction action, AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
+    public Optional<UUID> process(SendFileAction action,
+                                  AbsSender sender,
+                                  Update update,
+                                  ActionContext context,
+                                  ScenariosMetadata metadata) throws TelegramApiException {
         final var chatId = context.getChatId();
 
         var fileData = fileService.getFile(action.getFileId());

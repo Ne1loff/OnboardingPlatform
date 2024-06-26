@@ -30,7 +30,11 @@ public class ReadMessageActionHandler implements ActionHandler<ReadMessageAction
     }
 
     @Override
-    public Optional<UUID> process(ReadMessageAction action, AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
+    public Optional<UUID> process(ReadMessageAction action,
+                                  AbsSender sender,
+                                  Update update,
+                                  ActionContext context,
+                                  ScenariosMetadata metadata) throws TelegramApiException {
         final Long chatId = context.getChatId();
 
         if (sendMessageStatus.computeIfAbsent(chatId, key -> false)) {
