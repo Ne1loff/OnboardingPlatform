@@ -17,21 +17,25 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class OnboardingBot extends TelegramLongPollingBot {
     private final TelegramBotProperties botProperties;
     private final ScenarioService scenarioService;
-    private final List<ActionHandler<Action>> actionHandlers;
+    private final Map<Class<? extends Action>, ActionHandler<Action>> actionHandlers;
 
     public OnboardingBot(TelegramBotProperties properties, ScenarioService service, List<ActionHandler<? extends Action>> actionHandlers) {
         super(properties.getBotToken());
         this.botProperties = properties;
         this.scenarioService = service;
-        this.actionHandlers = actionHandlers.stream().map(it -> (ActionHandler<Action>) it).toList();
+        //noinspection unchecked
+        this.actionHandlers = actionHandlers.stream()
+                .collect(Collectors.toMap(ActionHandler::getHandledClass, it -> (ActionHandler<Action>) it));
     }
 
     @Override
@@ -85,10 +89,8 @@ public class OnboardingBot extends TelegramLongPollingBot {
                 context.put(ContextConstants.ACTION_ID, action.getId());
                 scenarioService.saveScenariosMetadata(context, metadata);
 
-                final var finalAction = action;
-                var handler = actionHandlers.stream().filter(it -> it.getHandledClass().equals(finalAction.getClass()))
-                        .findFirst().orElseThrow();
-                var nextActionId = handler.process(finalAction, this, update, context, metadata);
+                var handler = actionHandlers.get(action.getClass());
+                var nextActionId = handler.process(action, this, update, context, metadata);
 
                 hasNext = nextActionId.isPresent() && route.hasAction(nextActionId.get());
                 if (hasNext) {
