@@ -1,6 +1,6 @@
 import type {ScenariosType} from "./types/scenarios.types";
 
-export const EMPTY_STRIGN = "$$__$NULL$__$$";
+export const EMPTY_STRIGN = "";
 
 export const mainScenaries: ScenariosType = {
     "name": "main-scenarios",
@@ -27,6 +27,7 @@ export const mainScenaries: ScenariosType = {
                 "name": "Получение вопроса",
                 "property": "user_name",
                 "regex": undefined,
+                "notificationMode": "ONCE",
                 "waitingTime": "PT5M",
                 "timeoutMessage": "Пожалуйста, скажи как тебя зовут)"
             },

@@ -1,4 +1,4 @@
-import {Array, Boolean, Nullish, Number, Record, String, Union} from 'runtypes';
+import {Array, Boolean, Literal, Nullish, Number, Record, String, Union} from 'runtypes';
 
 export const EntryActionRecord = Record({
     name: String
@@ -30,6 +30,7 @@ export const ReadMessageActionRecord = Record({
     nextActionId: String.Or(Nullish),
     property: String,
     regex: String.Or(Nullish),
+    notificationMode: Union(Literal("ONCE"), Literal("EVERY")),
     waitingTime: String,
     timeoutMessage: String,
 });

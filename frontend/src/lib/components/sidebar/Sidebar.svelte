@@ -3,6 +3,7 @@
     import type { ActionsType } from "$lib/scenaries/types/scenarios.types";
     import {
         ActionRecord,
+        ReadMessageActionRecord,
         SendMessageActionRecord,
     } from "$lib/scenaries/types/scenarios.types.records";
     import {
@@ -14,6 +15,7 @@
     } from "carbon-components-svelte";
     import { createEventDispatcher, setContext } from "svelte";
     import { writable, type Updater, type Writable } from "svelte/store";
+    import ReadMessageEditor from "./ReadMessageEditor.svelte";
     import SendMessageEditor from "./SendMessageEditor.svelte";
 
     export let open: boolean;
@@ -53,7 +55,7 @@
 <div class:bx--modal-custom={true}>
     <div role="dialog" aria-modal="true" class:bx--modal-container={true}>
         {#if ActionRecord.guard($flow)}
-            <ModalHeader label={$flow.id + ""} title="Подтвердите изменения" />
+            <ModalHeader label={$flow.id + ""} title="Изменить действие" />
             <ModalBody hasForm hasScrollingContent>
                 <TextInput
                     labelText="Название действия"
@@ -67,6 +69,8 @@
                 />
                 {#if SendMessageActionRecord.guard($flow)}
                     <SendMessageEditor action={flow} />
+                {:else if ReadMessageActionRecord.guard($flow)}
+                    <ReadMessageEditor action={flow} />
                 {/if}
                 <Checkbox
                     labelText="I have reviewed the changes"

@@ -34,6 +34,7 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
                 nextActionId: undefined,
                 property: EMPTY_STRIGN,
                 regex: undefined,
+                notificationMode: "EVERY",
                 waitingTime: EMPTY_STRIGN,
                 timeoutMessage: EMPTY_STRIGN
             } satisfies ReadMessageActionType;

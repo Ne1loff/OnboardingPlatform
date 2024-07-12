@@ -1,9 +1,16 @@
 <script lang="ts">
+    import type { ActionNodeType } from "$lib/scenaries/types/scenarios.node.types";
+    import {
+        ActionButtonRecord,
+        ActionRecord,
+    } from "$lib/scenaries/types/scenarios.types.records";
     import {
         BaseEdge,
         EdgeLabelRenderer,
         getBezierPath,
         useEdges,
+        useNodes,
+        type Edge,
         type EdgeProps,
     } from "@xyflow/svelte";
 
@@ -17,7 +24,7 @@
     export let targetX: $$Props["targetX"];
     export let targetY: $$Props["targetY"];
     export let targetPosition: $$Props["targetPosition"];
-    export let markerEnd: $$Props["markerEnd"] = undefined; 
+    export let markerEnd: $$Props["markerEnd"] = undefined;
     export let style: $$Props["style"] = undefined;
 
     $: [edgePath, labelX, labelY] = getBezierPath({
@@ -30,10 +37,38 @@
     });
 
     const edges = useEdges();
+    const nodes = useNodes();
+
+    const updateActionData = (
+        edge: Edge<Record<string, unknown>, string | undefined>,
+    ) => {
+        nodes.update((it) => {
+            const actionNode = <ActionNodeType>(
+                it.find((node) => node.id === edge.source)
+            );
+            actionNode.data.flow.update((data) => {
+                if (ActionButtonRecord.guard(data)) {
+                    data.nextActionId = "0";
+                } else if (ActionRecord.guard(data)) {
+                    data.nextActionId = null;
+                }
+
+                return data;
+            });
+            return it;
+        });
+    };
 
     const onEdgeClick = () =>
-        edges.update((eds) => eds.filter((edge) => edge.id !== id));
-
+        edges.update((eds) =>
+            eds.filter((edge) => {
+                if (edge.id === id) {
+                    updateActionData(edge);
+                    return false;
+                }
+                return true;
+            }),
+        );
 </script>
 
 <EdgeLabelRenderer>
