@@ -1,30 +1,40 @@
 <script lang="ts">
+    import {
+        ActionFlowNodeType,
+        createConnection,
+        createEdge,
+        getEdgeId,
+    } from "$lib/scenaries/scenarios.flow";
     import type { ActionNodeType } from "$lib/scenaries/types/scenarios.node.types";
-    import type { ActionsType } from "$lib/scenaries/types/scenarios.types";
+    import type { ActionType } from "$lib/scenaries/types/scenarios.types";
+    import { ActionRecord } from "$lib/scenaries/types/scenarios.types.records";
+    import { addEdge, useEdges, useNodes, useSvelteFlow } from "@xyflow/svelte";
     import {
-        ActionRecord,
-        ReadMessageActionRecord,
-        SendMessageActionRecord,
-    } from "$lib/scenaries/types/scenarios.types.records";
-    import {
-        Checkbox,
+        ComboBox,
         ModalBody,
-        ModalFooter,
         ModalHeader,
         TextInput,
     } from "carbon-components-svelte";
+    import type { ComboBoxItem } from "carbon-components-svelte/src/ComboBox/ComboBox.svelte";
     import { createEventDispatcher, setContext } from "svelte";
-    import { writable, type Updater, type Writable } from "svelte/store";
+    import { writable, type Writable } from "svelte/store";
+    import ChangeScenariosEditor from "./ChangeScenariosEditor.svelte";
+    import ForwardMessageEditor from "./ForwardMessageEditor.svelte";
     import ReadMessageEditor from "./ReadMessageEditor.svelte";
+    import SendContactEditor from "./SendContactEditor.svelte";
+    import SendFileEditor from "./SendFileEditor.svelte";
     import SendMessageEditor from "./SendMessageEditor.svelte";
+    import { getSelectableActions } from "./utils";
 
     export let open: boolean;
     export let node: ActionNodeType;
 
-    let flow: Writable<ActionsType>;
-    $: flow = node.data.flow;
+    const { getEdge } = useSvelteFlow();
+    const actions = useNodes();
+    const edges = useEdges();
 
-    let checked = false;
+    let flow: Writable<ActionType>;
+    $: flow = node.data.flow;
 
     const dispatch = createEventDispatcher();
     const label = writable<string>(undefined);
@@ -43,11 +53,59 @@
         },
     });
 
-    const updateNodeData = (updater: Updater<ActionsType>) => {
+    const selectAction = (id: string | undefined) => {
         if (!ActionRecord.guard($flow)) return;
 
-        flow.update(updater);
+        const prevConnectedNodeId = $flow.nextActionId ?? undefined;
+        $flow.nextActionId = !id ? null : id;
+
+        if (prevConnectedNodeId) {
+            const oldEdgeId = getEdgeId($flow.id, prevConnectedNodeId);
+
+            if (!id) {
+                edges.update((old) => old.filter((it) => it.id !== oldEdgeId));
+                return;
+            }
+
+            const oldEdge = getEdge(oldEdgeId)!;
+            const newConnection = createConnection($flow.id, id);
+
+            edges.update((old) => {
+                const updated = old.filter((it) => it.id !== oldEdge.id);
+                updated.push({
+                    ...oldEdge,
+                    id: getEdgeId(newConnection.source, newConnection.target),
+                    source: newConnection.source,
+                    target: newConnection.target,
+                    sourceHandle: newConnection.sourceHandle,
+                    targetHandle: newConnection.targetHandle,
+                });
+
+                return updated;
+            });
+        } else if (id) {
+            $edges = addEdge(
+                createEdge(createConnection($flow.id, id)),
+                $edges,
+            );
+        }
     };
+
+    function shouldFilterItem(item: ComboBoxItem, value: string): boolean {
+        if (!value) return true;
+
+        const text = item.text.toLowerCase();
+        const comparison = value.toLowerCase();
+
+        return text.includes(comparison);
+    }
+
+    $: selectedAction = $flow.nextActionId ?? undefined;
+    $: items = getSelectableActions($actions);
+
+    function cast<T>(flow: Writable<ActionType>): T {
+        return <T>flow;
+    }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -60,28 +118,32 @@
                 <TextInput
                     labelText="Название действия"
                     placeholder="Введите название"
-                    value={$flow.name}
-                    on:input={({ detail }) =>
-                        updateNodeData((action) => {
-                            action.name = detail + "";
-                            return action;
-                        })}
+                    bind:value={$flow.name}
                 />
-                {#if SendMessageActionRecord.guard($flow)}
-                    <SendMessageEditor action={flow} />
-                {:else if ReadMessageActionRecord.guard($flow)}
-                    <ReadMessageEditor action={flow} />
+                {#if node.type == ActionFlowNodeType.SEND_MESSAGE}
+                    <SendMessageEditor action={cast(flow)} />
+                {:else if node.type == ActionFlowNodeType.CHANGE_SCENARIOS}
+                    <ChangeScenariosEditor action={cast(flow)} />
+                {:else if node.type == ActionFlowNodeType.SEND_FILE}
+                    <SendFileEditor action={cast(flow)} />
+                {:else if node.type == ActionFlowNodeType.SEND_CONTACT}
+                    <SendContactEditor action={cast(flow)} />
+                {:else if node.type == ActionFlowNodeType.READ_MESSAGE}
+                    <ReadMessageEditor action={cast(flow)} />
+                {:else if node.type == ActionFlowNodeType.FORWARD_MESSAGE}
+                    <ForwardMessageEditor action={cast(flow)} />
                 {/if}
-                <Checkbox
-                    labelText="I have reviewed the changes"
-                    bind:checked
+                <ComboBox
+                    titleText="Следующее действие"
+                    placeholder="Нет следующего действия"
+                    direction="top"
+                    selectedId={selectedAction}
+                    {items}
+                    on:select={({ detail }) => selectAction(detail.selectedId)}
+                    on:clear={() => selectAction(undefined)}
+                    {shouldFilterItem}
                 />
             </ModalBody>
-            <ModalFooter
-                secondaryButtonText="Отменить"
-                primaryButtonText="Сохранить"
-                primaryButtonDisabled={!checked}
-            />
         {/if}
     </div>
 </div>

@@ -1,6 +1,7 @@
 package com.example.onboardingservice.config;
 
 import lombok.SneakyThrows;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -14,6 +15,7 @@ public class TelegramBotConfig {
 
     @Bean
     @SneakyThrows
+    @ConditionalOnProperty(value = "telegram.bot-enabled", havingValue = "true")
     public TelegramBotsApi registerBots(List<LongPollingBot> bots) {
         var botsApi = new TelegramBotsApi(DefaultBotSession.class);
 

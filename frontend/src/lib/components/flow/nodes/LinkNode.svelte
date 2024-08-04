@@ -11,6 +11,7 @@
         useNodesData,
         type NodeProps,
     } from "@xyflow/svelte";
+    import { DirectLink } from "carbon-icons-svelte";
 
     $$restProps;
     type $$Props = NodeProps<ActionLinkNode>;
@@ -19,12 +20,16 @@
     const { flow } = data;
 
     const link = useNodesData<ActionNodeType>($flow.link);
-    const linkFlow = $link?.data.flow;
-    
+    const linkFlow = $link!.data.flow;
+
+    $: $flow.name = $linkFlow.name;
 
 </script>
 
 <div class="action-link-node">
+    <div class="action-node-icon">
+        <DirectLink size={20}/>
+    </div>
     <div class="action-inner-container">
         <div>{$linkFlow?.name}</div>
     </div>
@@ -57,6 +62,17 @@
         border-radius: 4px;
         padding: 8px;
         background-color: var(--cds-ui-background, #fff);
+
+        display: flex;
+        align-items: start;
+    }
+
+    .action-node-icon {
+        height: 32px;
+        width: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .action-inner-container {

@@ -33,8 +33,8 @@ public class SendContactActionHandler implements ActionHandler<SendContactAction
                 .firstName(action.getFirstName())
                 .lastName(action.getLastName())
                 .build();
-        sender.execute(message);
 
+        sender.execute(message);
         return action.getNextActionId();
     }
 }

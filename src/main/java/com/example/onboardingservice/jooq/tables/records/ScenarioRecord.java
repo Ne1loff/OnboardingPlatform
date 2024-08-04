@@ -325,4 +325,22 @@ public class ScenarioRecord extends UpdatableRecordImpl<ScenarioRecord> implemen
         setContext(context);
         resetChangedOnNotNull();
     }
+
+    /**
+     * Create a detached, initialised ScenarioRecord
+     */
+    public ScenarioRecord(com.example.onboardingservice.jooq.tables.pojos.Scenario value) {
+        super(Scenario.SCENARIO);
+
+        if (value != null) {
+            setId(value.getId());
+            setScenarioName(value.getScenarioName());
+            setChatId(value.getChatId());
+            setCurrentActionId(value.getCurrentActionId());
+            setIsActive(value.getIsActive());
+            setFirstActionId(value.getFirstActionId());
+            setContext(value.getContext());
+            resetChangedOnNotNull();
+        }
+    }
 }

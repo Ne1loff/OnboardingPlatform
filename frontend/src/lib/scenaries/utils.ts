@@ -16,7 +16,7 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
             return {
                 name: "Изменить сценарий",
                 id: crypto.randomUUID(),
-                nextActionId: undefined,
+                nextActionId: null,
                 nextScenariosName: EMPTY_STRIGN,
                 startFromBegin: false
             } satisfies ChangeScenariosActionType;
@@ -24,16 +24,16 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
             return {
                 name: "Переслать сообщение",
                 id: crypto.randomUUID(),
-                nextActionId: undefined,
+                nextActionId: null,
                 forwardChatId: -1
             } satisfies ForwardMessageActionType;
         case ActionFlowNodeType.READ_MESSAGE:
             return {
                 name: "Прочитать сообщение",
                 id: crypto.randomUUID(),
-                nextActionId: undefined,
+                nextActionId: null,
                 property: EMPTY_STRIGN,
-                regex: undefined,
+                regex: null,
                 notificationMode: "EVERY",
                 waitingTime: EMPTY_STRIGN,
                 timeoutMessage: EMPTY_STRIGN
@@ -42,7 +42,7 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
             return {
                 name: "Отправить контакт",
                 id: crypto.randomUUID(),
-                nextActionId: undefined,
+                nextActionId: null,
                 phoneNumber: EMPTY_STRIGN,
                 firstName: EMPTY_STRIGN,
                 lastName: EMPTY_STRIGN
@@ -51,7 +51,7 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
             return {
                 name: "Отправить файл",
                 id: crypto.randomUUID(),
-                nextActionId: undefined,
+                nextActionId: null,
                 fileId: EMPTY_STRIGN,
                 fileName: EMPTY_STRIGN
             } satisfies SendFileActionType;
@@ -59,7 +59,7 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
             return {
                 name: "Отправить сообщение",
                 id: crypto.randomUUID(),
-                nextActionId: undefined,
+                nextActionId: null,
                 buttons: [],
                 text: EMPTY_STRIGN,
                 isMarkdownText: false

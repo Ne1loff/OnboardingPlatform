@@ -6,9 +6,9 @@ import com.example.onboardingservice.scenaries.ContextConstants;
 import com.example.onboardingservice.scenaries.ScenarioService;
 import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import com.example.onboardingservice.scenaries.model.ScenariosRouteDescription;
+import com.example.onboardingservice.scenaries.model.enumeration.ScenariosStatus;
 import com.example.onboardingservice.scenaries.model.impl.*;
 import com.example.onboardingservice.utils.JooqUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -141,17 +141,19 @@ public class ScenariosServiceImpl implements ScenarioService {
     }
 
     private List<ScenariosRouteDescription> getRouteDescriptions() {
+        var statuses = List.of(ScenariosStatus.PUBLISHED.toString(), ScenariosStatus.TEST.toString());
         return jooq.selectFrom(SCENARIO_ROUTE_DEFINITION)
+                .where(SCENARIO_ROUTE_DEFINITION.STATUS.in(statuses))
                 .fetch()
                 .stream()
                 .map(it -> {
                     var routeDescription = new ScenariosRouteDescriptionImpl();
+                    routeDescription.setId(it.getId());
                     routeDescription.setName(it.getScenarioName());
                     routeDescription.setFirstActionId(it.getFirstActionId());
-                    routeDescription.setMatchers(JooqUtils.fromJsonb(it.getMatcher(), new TypeReference<>() {
-                    }));
-                    routeDescription.setRoute(JooqUtils.fromJsonb(it.getRouteSource(), new TypeReference<>() {
-                    }));
+                    routeDescription.setStatus(ScenariosStatus.valueOf(it.getStatus()));
+                    routeDescription.setMatcher(JooqUtils.fromJsonb(it.getMatcher(), RouteMatcher.class));
+                    routeDescription.setRoute(JooqUtils.fromJsonb(it.getRouteSource(), ScenariosRouteBlueprint.class));
                     return (ScenariosRouteDescription) routeDescription;
                 }).toList();
     }

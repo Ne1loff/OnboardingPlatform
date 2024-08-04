@@ -1,7 +1,7 @@
 <script lang="ts">
     import type {
         ActionFlow,
-        ActionNodeType,
+        ActionsNodeType,
     } from "$lib/scenaries/types/scenarios.node.types";
     import type { ActionsType } from "$lib/scenaries/types/scenarios.types";
     import { ActionButtonRecord } from "$lib/scenaries/types/scenarios.types.records";
@@ -9,16 +9,25 @@
         Handle,
         Position,
         useHandleConnections,
+        useNodes,
         type NodeProps,
     } from "@xyflow/svelte";
+    import { derived } from "svelte/store";
 
     $$restProps;
-    type $$Props = NodeProps<ActionNodeType>;
+    type $$Props = NodeProps<ActionsNodeType>;
 
     export let id: $$Props["id"];
     export let data: ActionFlow<ActionsType>;
-    const { flow } = data;
 
+    const nodes = useNodes();
+    const node = $nodes.find((it) => it.id === id)!;
+    const parent = derived(
+        nodes,
+        ($nodes) => $nodes.find((it) => it.id === node.parentId),
+    );
+    const parentWidth = derived(parent, ($parent) => $parent?.measured?.width ? $parent.measured.width - 30 : undefined);
+    const { flow } = data;
     const sourceConnections = useHandleConnections({
         nodeId: id,
         type: "source",
@@ -27,7 +36,10 @@
     $: sourceIsConnectable = $sourceConnections.length === 0;
 </script>
 
-<div class="action-button-node">
+<div
+    class="action-button-node"
+    style:width={$parentWidth ? `${$parentWidth}px` : $parentWidth}
+>
     <div class="action-inner-container">
         {#if ActionButtonRecord.guard($flow)}
             <div>{$flow.name}</div>

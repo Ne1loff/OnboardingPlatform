@@ -10,6 +10,7 @@ import type {
     ReadMessageActionRecord,
     RouteRecord,
     ScenariosRecord,
+    ScenariosStatus,
     SendContactActionRecord,
     SendFileActionRecord,
     SendMessageActionRecord
@@ -18,6 +19,7 @@ import type {
 // scenarios
 export type MatcherType = Static<typeof MatcherRecord>
 export type RouteType = Static<typeof RouteRecord>
+export type ScenariosStatusType = Static<typeof ScenariosStatus>
 export type ScenariosType = Static<typeof ScenariosRecord>
 
 // actions helpers

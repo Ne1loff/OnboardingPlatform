@@ -1,16 +1,18 @@
+import {writable} from "svelte/store";
 import type {ScenariosType} from "./types/scenarios.types";
 
 export const EMPTY_STRIGN = "";
 
 export const mainScenaries: ScenariosType = {
+    "id": "fb2c044a-ff40-41b2-beda-91c8ca3040ff",
+    "status": "PUBLISHED",
     "name": "main-scenarios",
     "firstActionId": "c38655e0-cf1a-444d-b0be-e15c7a2179b8",
-    "matchers": [
-        {
-            "type": "COMMAND",
-            "value": "/start"
-        }
-    ],
+    "matcher": {
+        "type": "COMMAND",
+        "value": "/start"
+    }
+    ,
     "route": {
         "actions": [
             {
@@ -26,14 +28,14 @@ export const mainScenaries: ScenariosType = {
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Получение вопроса",
                 "property": "user_name",
-                "regex": undefined,
+                "regex": null,
                 "notificationMode": "ONCE",
                 "waitingTime": "PT5M",
                 "timeoutMessage": "Пожалуйста, скажи как тебя зовут)"
             },
             {
                 "id": "c860953b-9043-4464-b98b-82f0e6723059",
-                "nextActionId": undefined,
+                "nextActionId": null,
                 "name": "Главное меню",
                 "text": "Привет, $user_name, приятно познакомится!\nМожет я могу чем-то помочь?",
                 "isMarkdownText": false,
@@ -88,14 +90,14 @@ export const mainScenaries: ScenariosType = {
 }
 
 export const documentsScenarios: ScenariosType = {
+    "id": "d3de6e5c-9d52-4be0-a9b9-b936f41f66ca",
+    "status": "DRAFT",
     "name": "documents-scenarios",
     "firstActionId": "e2e1b674-dfbc-4c55-abf8-2055d07bbf5b",
-    "matchers": [
-        {
-            "type": "COMMAND",
-            "value": "/documents"
-        }
-    ],
+    "matcher": {
+        "type": "COMMAND",
+        "value": "/documents"
+    },
     "route": {
         "actions": [
             {
@@ -139,3 +141,61 @@ export const documentsScenarios: ScenariosType = {
         ]
     }
 }
+
+export const questionScenarios: ScenariosType = {
+    "id": "1991fe8d-186f-4dc3-bc32-58a51bc9b60d",
+    "status": "DRAFT",
+    "name": "question-scenarios",
+    "firstActionId": "5436b959-f75e-4aa1-a644-daa64caa7caa",
+    "matcher": {
+        "type": "COMMAND",
+        "value": "/qa"
+    },
+    "route": {
+        "actions": [
+            {
+                "id": "5436b959-f75e-4aa1-a644-daa64caa7caa",
+                "nextActionId": "4ceb84f0-a55b-4c04-a4a5-34c8d66461a6",
+                "name": "Подготовка",
+                "text": "Задайте вопрос, постараюсь на него ответить)",
+                "isMarkdownText": false,
+                "buttons": []
+            },
+            {
+                "id": "4ceb84f0-a55b-4c04-a4a5-34c8d66461a6",
+                "nextActionId": "bee09d11-8781-4689-bbbf-331104d817b9",
+                "name": "Получение вопроса",
+                "property": "question",
+                "regex": null,
+                "notificationMode": "ONCE",
+                "waitingTime": "PT5M",
+                "timeoutMessage": "Пожалуйста, скажи как тебя зовут)"
+            },
+            {
+                "id": "bee09d11-8781-4689-bbbf-331104d817b9",
+                "nextActionId": "f9babeee-530d-41d3-9c66-51ab919d6f65",
+                "name": "Ответ на вопрос",
+                "text": "На данный момент, я не могу ответить на этот вопрос: $question\nПоэтому пересылаю его HR-у",
+                "isMarkdownText": false,
+                "buttons": []
+            },
+            {
+                "id": "f9babeee-530d-41d3-9c66-51ab919d6f65",
+                "name": "Отправка сообщения HR'у",
+                "nextActionId": "3e7f650d-1c13-4a39-bb56-188304222fb7",
+                "forwardChatId": 415119771
+            },
+            {
+                "id": "3e7f650d-1c13-4a39-bb56-188304222fb7",
+                "nextActionId": null,
+                "name": "Запустить сценарий - Главное меню",
+                "nextScenariosName": "main-scenarios",
+                "startFromBegin": false
+            }
+        ]
+    }
+}
+
+export const scenaries = writable([
+    mainScenaries, documentsScenarios, questionScenarios
+]);

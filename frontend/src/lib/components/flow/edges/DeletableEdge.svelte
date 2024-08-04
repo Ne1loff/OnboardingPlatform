@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ActionNodeType } from "$lib/scenaries/types/scenarios.node.types";
+    import type { ActionsNodeType } from "$lib/scenaries/types/scenarios.node.types";
     import {
         ActionButtonRecord,
         ActionRecord,
@@ -13,6 +13,8 @@
         type Edge,
         type EdgeProps,
     } from "@xyflow/svelte";
+    import { getContext } from "svelte";
+    import type { Readable } from "svelte/store";
 
     $$restProps;
     type $$Props = EdgeProps;
@@ -26,6 +28,10 @@
     export let targetPosition: $$Props["targetPosition"];
     export let markerEnd: $$Props["markerEnd"] = undefined;
     export let style: $$Props["style"] = undefined;
+
+    const disabledEditing = getContext<Readable<boolean>>(
+        "scenariosDisabledEditing",
+    );
 
     $: [edgePath, labelX, labelY] = getBezierPath({
         sourceX,
@@ -43,14 +49,14 @@
         edge: Edge<Record<string, unknown>, string | undefined>,
     ) => {
         nodes.update((it) => {
-            const actionNode = <ActionNodeType>(
+            const actionNode = <ActionsNodeType>(
                 it.find((node) => node.id === edge.source)
             );
             actionNode.data.flow.update((data) => {
-                if (ActionButtonRecord.guard(data)) {
-                    data.nextActionId = "0";
-                } else if (ActionRecord.guard(data)) {
+                if (ActionRecord.guard(data)) {
                     data.nextActionId = null;
+                } else if (ActionButtonRecord.guard(data)) {
+                    data.nextActionId = "0";
                 }
 
                 return data;
@@ -76,7 +82,13 @@
         class="edgeButtonContainer nodrag nopan"
         style:transform="translate(-50%, -50%) translate({labelX}px,{labelY}px)"
     >
-        <button class="edgeButton" on:click={onEdgeClick}> × </button>
+        <button
+            class="edgeButton"
+            on:click={onEdgeClick}
+            disabled={$disabledEditing}
+        >
+            ×
+        </button>
     </div>
 </EdgeLabelRenderer>
 <BaseEdge path={edgePath} {markerEnd} {style} />

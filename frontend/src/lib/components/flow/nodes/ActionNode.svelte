@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { ActionFlowNodeType } from "$lib/scenaries/scenarios.flow";
     import type {
         ActionFlow,
         ActionNodeType,
@@ -11,11 +12,20 @@
         useHandleConnections,
         type NodeProps,
     } from "@xyflow/svelte";
+    import {
+        Attachment,
+        ChangeCatalog,
+        DirectionRight_01,
+        Send,
+        UserMultiple,
+        WatsonHealthTextAnnotationToggle ,
+    } from "carbon-icons-svelte";
 
     $$restProps;
     type $$Props = NodeProps<ActionNodeType>;
 
     export let id: $$Props["id"];
+    export let type: $$Props["type"];
     export let data: ActionFlow<ActionsType>;
     const { flow } = data;
 
@@ -24,14 +34,26 @@
         type: "source",
     });
 
+    const iconByType = {
+        [ActionFlowNodeType.SEND_MESSAGE]: Send,
+        [ActionFlowNodeType.SEND_FILE]: Attachment,
+        [ActionFlowNodeType.SEND_CONTACT]: UserMultiple,
+        [ActionFlowNodeType.READ_MESSAGE]: WatsonHealthTextAnnotationToggle ,
+        [ActionFlowNodeType.FORWARD_MESSAGE]: DirectionRight_01,
+        [ActionFlowNodeType.CHANGE_SCENARIOS]: ChangeCatalog,
+    };
+
     $: sourceIsConnectable = $sourceConnections.length === 0;
     $: height =
         SendMessageActionRecord.guard($flow) && $flow.buttons.length > 0
-            ? (56 + $flow.buttons.length * 42)
+            ? 56 + $flow.buttons.length * 42
             : undefined;
 </script>
 
 <div class="action-node" style:height={height ? `${height}px` : height}>
+    <div class="action-node-icon">
+        <svelte:component this={iconByType[type]} size={18}/>
+    </div>
     <div class="action-inner-container">
         <div>{$flow.name}</div>
     </div>
@@ -82,12 +104,20 @@
         align-items: start;
     }
 
+    .action-node-icon {
+        height: 32px;
+        width: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .action-inner-container {
         height: 30px;
         min-width: 150px;
 
         display: flex;
-        justify-content: center;
+        justify-content: start;
         align-items: center;
     }
 </style>

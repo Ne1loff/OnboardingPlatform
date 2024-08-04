@@ -4,6 +4,7 @@ import type {
     ActionButtonType,
     ActionLinkType,
     ActionsType,
+    ActionType,
     ChangeScenariosActionType,
     EntryActionType,
     ForwardMessageActionType,
@@ -35,4 +36,6 @@ export type SendFileNode = Node<ActionFlow<SendFileActionType>>;
 export type SendMessageNode = Node<ActionFlow<SendMessageActionType>>;
 
 
-export type ActionNodeType = Node<ActionFlow<ActionsType>>
+//unions
+export type ActionNodeType = Node<ActionFlow<ActionType>>
+export type ActionsNodeType = Node<ActionFlow<ActionsType>>

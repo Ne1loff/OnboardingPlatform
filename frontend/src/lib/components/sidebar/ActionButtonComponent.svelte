@@ -1,25 +1,15 @@
 <script lang="ts">
     import {
-        ActionFlowNodeType,
-        CORE_ACTION_FLOW_NODE_TYPES,
         createConnection,
         createEdge,
         getButtonNodeId,
         getEdgeId,
     } from "$lib/scenaries/scenarios.flow";
-    import type { ActionFlow } from "$lib/scenaries/types/scenarios.node.types";
     import type {
         ActionButtonType,
-        ActionsType,
         SendMessageActionType,
     } from "$lib/scenaries/types/scenarios.types";
-    import {
-        addEdge,
-        useEdges,
-        useNodes,
-        useSvelteFlow,
-        type Node,
-    } from "@xyflow/svelte";
+    import { addEdge, useEdges, useNodes, useSvelteFlow } from "@xyflow/svelte";
     import {
         Button,
         Select,
@@ -31,6 +21,7 @@
     import CloseLarge from "carbon-icons-svelte/lib/CloseLarge.svelte";
     import { createEventDispatcher } from "svelte";
     import type { Writable } from "svelte/store";
+    import { getSelectableActions } from "./utils";
 
     export let buttonData: Writable<ActionButtonType>;
     export let parent: Writable<SendMessageActionType>;
@@ -42,42 +33,14 @@
     const edges = useEdges();
 
     let items: DropdownItem[];
-    $:selectedAction = $buttonData.nextActionId;
-
-    const getActionName = (data: ActionFlow<ActionsType>): string => {
-        let name: string = "";
-        const unsubscribe = data.flow.subscribe((it) => (name = it.name));
-        unsubscribe();
-
-        return name;
-    };
-
-    const getItems = (
-        it: Node<Record<string, unknown>, string>[],
-    ): DropdownItem[] => {
-        const items: DropdownItem[] = it
-            .filter((it) =>
-                CORE_ACTION_FLOW_NODE_TYPES.includes(
-                    <ActionFlowNodeType>it.type,
-                ),
-            )
-            .map((it) => ({
-                id: it.id,
-                text: getActionName(<ActionFlow<ActionsType>>it.data),
-            }));
-
-        items.unshift({ id: "0", text: "Выберите следующее действие" });
-        return items;
-    };
+    $: selectedAction = $buttonData.nextActionId;
 
     const selectAction = (id: string) => {
         const prevConnectedNodeId = $buttonData.nextActionId;
         $parent.buttons = $parent.buttons.map((it) =>
-            it.name === $buttonData.name
-                ? { ...it, nextActionId: id }
-                : it,
+            it.name === $buttonData.name ? { ...it, nextActionId: id } : it,
         );
-        
+
         buttonData.update((it) => {
             it.nextActionId = id;
             return it;
@@ -115,7 +78,7 @@
         }
     };
 
-    $: items = getItems($actions);
+    $: items = getSelectableActions($actions, { id: "0", text: "Выберите следующее действие" });
 </script>
 
 <div class="wrapper">

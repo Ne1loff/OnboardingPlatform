@@ -2,10 +2,16 @@ server:
   port: ${SERVER_PORT:8080}
 
 telegram:
+  bot-enabled: ${TELEGRAM_BOT_ENABLED:true}
   bot-name: ${TELEGRAM_BOT_NAME:}
   bot-token: ${TELEGRAM_BOT_TOKEN:}
 
 spring:
+  servlet:
+    multipart:
+      location: ${java.io.tmpdir}
+      max-file-size: 2GB
+      max-request-size: 10GB
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}

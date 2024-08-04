@@ -1,8 +1,12 @@
 package com.example.onboardingservice.scenaries.handlers;
 
+import com.example.onboardingservice.model.NotificationCommand;
+import com.example.onboardingservice.model.NotificationStatus;
 import com.example.onboardingservice.scenaries.ActionContext;
 import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import com.example.onboardingservice.scenaries.actions.impl.ReadMessageAction;
+import com.example.onboardingservice.service.NotificationsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -13,16 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Pattern;
 
 @Component
+@RequiredArgsConstructor
 public class ReadMessageActionHandler implements ActionHandler<ReadMessageAction> {
 
+    private final NotificationsService notificationsService;
     private final Map<Long, Boolean> sendMessageStatus = new HashMap<>();
-
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     @Override
     public Class<ReadMessageAction> getHandledClass() {
@@ -52,9 +54,22 @@ public class ReadMessageActionHandler implements ActionHandler<ReadMessageAction
 
             context.put(action.getProperty(), userMessage);
 
+            if (context.containsKey("NOTIFICATION_ID")) {
+                notificationsService.updateNotificationStatus(UUID.fromString(context.get("NOTIFICATION_ID")), NotificationStatus.DISABLE);
+            }
+
             sendMessageStatus.put(chatId, false);
         } else {
             sendMessageStatus.put(chatId, true);
+            if (!action.getNotificationMode().isDisabled()) {
+                var command = NotificationCommand.of(
+                        context.getChatId(),
+                        action.getTimeoutMessage(),
+                        action.getWaitingTime(),
+                        action.getNotificationMode());
+                var notificationId = notificationsService.registerNotification(command);
+                context.put("NOTIFICATION_ID", notificationId);
+            }
         }
 
         return action.getNextActionId().filter(it -> !sendMessageStatus.getOrDefault(chatId, true));

@@ -10,32 +10,37 @@ import com.example.onboardingservice.scenaries.handlers.ActionHandler;
 import com.example.onboardingservice.scenaries.model.enumeration.ScenariosStartEventType;
 import com.example.onboardingservice.scenaries.utils.ButtonActionUtils;
 import com.example.onboardingservice.scenaries.utils.InitScenariosCommandUtils;
+import com.example.onboardingservice.service.HrsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 @Component
 public class OnboardingBot extends TelegramLongPollingBot {
     private final TelegramBotProperties botProperties;
     private final ScenarioService scenarioService;
+    private final HrsService hrsService;
     private final Map<Class<? extends Action>, ActionHandler<Action>> actionHandlers;
 
-    public OnboardingBot(TelegramBotProperties properties, ScenarioService service, List<ActionHandler<? extends Action>> actionHandlers) {
+    public OnboardingBot(TelegramBotProperties properties,
+                         ScenarioService service,
+                         HrsService hrsService,
+                         List<ActionHandler<? extends Action>> actionHandlers) {
         super(properties.getBotToken());
         this.botProperties = properties;
         this.scenarioService = service;
-        //noinspection unchecked
-        this.actionHandlers = actionHandlers.stream()
-                .collect(Collectors.toMap(ActionHandler::getHandledClass, it -> (ActionHandler<Action>) it));
+        this.hrsService = hrsService;
+        this.actionHandlers = new HashMap<>();
+
+        for (var actionHandler : actionHandlers) {
+            //noinspection unchecked
+            this.actionHandlers.put(actionHandler.getHandledClass(), (ActionHandler<Action>) actionHandler);
+        }
     }
 
     @Override
@@ -55,7 +60,6 @@ public class OnboardingBot extends TelegramLongPollingBot {
             context = scenarioService.buildContext(chatId);
 
             context.put(ContextConstants.CHAT_ID, chatId);
-            context.put(ContextConstants.ACTION_ID, callbackData.actionId());
             context.put(ScenariosStartEventType.BUTTON.name(), messageText);
 
         } else {
@@ -68,12 +72,15 @@ public class OnboardingBot extends TelegramLongPollingBot {
             context.put(eventType.name(), messageText);
         }
 
+        final var isTestUser = hrsService.isHrChatId(context.getChatId());
+        context.put(ContextConstants.INCLUDE_TEST_SCENARIOS, isTestUser);
+
         metadata = scenarioService.findActiveScenariosMetadata(chatId);
         // meta == null => new chat
         if (metadata == null) {
             metadata = scenarioService.initializeScenarios(context);
         } else {
-            context.restore(scenarioService.findActiveContext(chatId));
+            context = context.restore(scenarioService.findActiveContext(chatId));
         }
 
         var route = metadata.getRoute();

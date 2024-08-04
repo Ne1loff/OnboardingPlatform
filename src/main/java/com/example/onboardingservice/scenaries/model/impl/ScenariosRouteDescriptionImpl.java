@@ -4,17 +4,19 @@ import com.example.onboardingservice.scenaries.ActionContext;
 import com.example.onboardingservice.scenaries.ContextConstants;
 import com.example.onboardingservice.scenaries.ScenariosRoute;
 import com.example.onboardingservice.scenaries.model.ScenariosRouteDescription;
+import com.example.onboardingservice.scenaries.model.enumeration.ScenariosStatus;
 import lombok.Data;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
 public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription {
 
+    private UUID id;
     private String name;
     private UUID firstActionId;
-    private List<RouteMatcher> matchers;
+    private RouteMatcher matcher;
+    private ScenariosStatus status;
     private ScenariosRouteBlueprint route;
 
     @Override
@@ -32,23 +34,23 @@ public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription 
             }
         }
 
-        for (RouteMatcher matcher : matchers) {
-            var type = matcher.getType();
-
-            if (!context.containsKey(type.name())) {
-                continue;
-            }
-
-            if (!context.get(type.name()).equals(matcher.getValue())) {
-                continue;
-            }
-
-            return ScenariosRouteImpl.builder()
-                    .withFirstActionId(firstActionId)
-                    .withActions(route.getActions())
-                    .withCurrentActionId(firstActionId)
-                    .build();
+        if (status == ScenariosStatus.TEST && !Boolean.parseBoolean(context.get(ContextConstants.INCLUDE_TEST_SCENARIOS))) {
+            return null;
         }
-        return null;
+
+        var type = matcher.getType();
+        if (!context.containsKey(type.name())) {
+            return null;
+        }
+
+        if (!context.get(type.name()).equals(matcher.getValue())) {
+            return null;
+        }
+
+        return ScenariosRouteImpl.builder()
+                .withFirstActionId(firstActionId)
+                .withActions(route.getActions())
+                .withCurrentActionId(firstActionId)
+                .build();
     }
 }

@@ -58,6 +58,16 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
      */
     public final TableField<ScenarioRouteDefinitionRecord, JSONB> MATCHER = createField(DSL.name("matcher"), SQLDataType.JSONB.nullable(false), this, "");
 
+    /**
+     * The column <code>public.scenario_route_definition.id</code>.
+     */
+    public final TableField<ScenarioRouteDefinitionRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
+
+    /**
+     * The column <code>public.scenario_route_definition.status</code>.
+     */
+    public final TableField<ScenarioRouteDefinitionRecord, String> STATUS = createField(DSL.name("status"), SQLDataType.VARCHAR(255).nullable(false).defaultValue(DSL.field(DSL.raw("'DRAFT'::character varying"), SQLDataType.VARCHAR)), this, "");
+
     private ScenarioRouteDefinition(Name alias, Table<ScenarioRouteDefinitionRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -143,18 +153,18 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<String, UUID, JSONB, JSONB> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row6<String, UUID, JSONB, JSONB, UUID, String> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super String, ? super UUID, ? super JSONB, ? super JSONB, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function6<? super String, ? super UUID, ? super JSONB, ? super JSONB, ? super UUID, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -162,7 +172,7 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super String, ? super UUID, ? super JSONB, ? super JSONB, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function6<? super String, ? super UUID, ? super JSONB, ? super JSONB, ? super UUID, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

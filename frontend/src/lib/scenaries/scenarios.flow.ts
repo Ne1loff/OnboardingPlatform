@@ -1,7 +1,7 @@
 import {type Connection, type Edge, MarkerType, Position} from "@xyflow/svelte";
 
-import {writable, type Writable} from "svelte/store";
-import type {ActionButtonNode, ActionNodeType} from "./types/scenarios.node.types";
+import {get, writable, type Writable} from "svelte/store";
+import type {ActionButtonNode, ActionNodeType, ActionsNodeType} from "./types/scenarios.node.types";
 import type {ActionButtonType, ActionType, EntryActionType, ScenariosType} from "./types/scenarios.types";
 import {ActionRecord, SendMessageActionRecord} from "./types/scenarios.types.records";
 
@@ -28,20 +28,20 @@ export const CORE_ACTION_FLOW_NODE_TYPES = [
 ];
 
 type ScenariosFlow = {
-    nodes: Writable<ActionNodeType[]>;
+    nodes: Writable<ActionsNodeType[]>;
     edges: Writable<Edge[]>;
 };
 
 const getFlowType = ActionRecord.match(
+    sendMessage => ActionFlowNodeType.SEND_MESSAGE,
     changeScenarios => ActionFlowNodeType.CHANGE_SCENARIOS,
-    forwardMessage => ActionFlowNodeType.FORWARD_MESSAGE,
-    readMessage => ActionFlowNodeType.READ_MESSAGE,
-    sendContact => ActionFlowNodeType.SEND_CONTACT,
     sendFile => ActionFlowNodeType.SEND_FILE,
-    sendMessage => ActionFlowNodeType.SEND_MESSAGE
+    sendContact => ActionFlowNodeType.SEND_CONTACT,
+    readMessage => ActionFlowNodeType.READ_MESSAGE,
+    forwardMessage => ActionFlowNodeType.FORWARD_MESSAGE,
 );
 
-const buildScenariosStartNode = (): ActionNodeType => ({
+const buildScenariosStartNode = (): ActionsNodeType => ({
     id: "start",
     type: ActionFlowNodeType.ENTRY_POINT,
     data: { flow: writable<EntryActionType>({ name: "Входная точка" }) },
@@ -64,10 +64,10 @@ export function scenariosToFlow(scenatios: ScenariosType): ScenariosFlow {
 
     let counter = 0;
     const buttonsConnection: Connection[] = []
-    const nodes: ActionNodeType[] = [buildScenariosStartNode(), ...scenatios.route.actions.flatMap((it): ActionNodeType[] => {
+    const nodes: ActionsNodeType[] = [buildScenariosStartNode(), ...scenatios.route.actions.flatMap((it): ActionsNodeType[] => {
         actionMap.set(it.id, it);
-
-        const result: ActionNodeType[] = [{
+        
+        const result: ActionsNodeType[] = [{
             id: it.id,
             type: getFlowType(it),
             data: { flow: writable(it) },
@@ -86,16 +86,34 @@ export function scenariosToFlow(scenatios: ScenariosType): ScenariosFlow {
 
         return result;
     })];
-    const nodesStore = writable<ActionNodeType[]>(nodes);
+    const nodesStore = writable<ActionsNodeType[]>(nodes);
 
     const edges: Edge[] = scenatios.route.actions.filter(it => !!it.nextActionId).map(it => createEdge(createConnection(it.id, <string>it.nextActionId)));
     edges.push(...buttonsConnection.map(it => createEdge(it)));
-    edges.push(createEdge(createConnection("start", scenatios.firstActionId)));
+    
+    if (scenatios.firstActionId) {
+        edges.push(createEdge(createConnection("start", scenatios.firstActionId)));
+    }
 
     const edgesStore = writable<Edge[]>(edges);
 
     return { nodes: nodesStore, edges: edgesStore }
 }
+
+export const flowToScenarios = (scenarios: ScenariosType, nodes: ActionsNodeType[]): ScenariosType => {
+    const actions: ActionType[] = [];
+    for (const node of nodes) {
+        if (node.type !== ActionFlowNodeType.ACTION_LINK && CORE_ACTION_FLOW_NODE_TYPES.includes(<ActionFlowNodeType> node.type)) {
+            const actionNode = <ActionNodeType> node;
+            const data = get(actionNode.data.flow);
+            actions.push(data);
+        }
+    }
+
+    scenarios.route.actions = actions;
+
+    return scenarios;
+} 
 
 export const createButtonNode = (button: ActionButtonType, parentId: string, index: number): ActionButtonNode => {
     const id = getButtonNodeId(parentId, index);

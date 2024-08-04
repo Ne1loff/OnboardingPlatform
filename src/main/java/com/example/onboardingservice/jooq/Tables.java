@@ -4,8 +4,7 @@
 package com.example.onboardingservice.jooq;
 
 
-import com.example.onboardingservice.jooq.tables.Scenario;
-import com.example.onboardingservice.jooq.tables.ScenarioRouteDefinition;
+import com.example.onboardingservice.jooq.tables.*;
 
 
 /**
@@ -15,9 +14,29 @@ import com.example.onboardingservice.jooq.tables.ScenarioRouteDefinition;
 public class Tables {
 
     /**
+     * The table <code>public.onboarding_documents</code>.
+     */
+    public static final OnboardingDocuments ONBOARDING_DOCUMENTS = OnboardingDocuments.ONBOARDING_DOCUMENTS;
+
+    /**
+     * The table <code>public.onboarding_hrs</code>.
+     */
+    public static final OnboardingHrs ONBOARDING_HRS = OnboardingHrs.ONBOARDING_HRS;
+
+    /**
+     * The table <code>public.onboarding_properties</code>.
+     */
+    public static final OnboardingProperties ONBOARDING_PROPERTIES = OnboardingProperties.ONBOARDING_PROPERTIES;
+
+    /**
      * The table <code>public.scenario</code>.
      */
     public static final Scenario SCENARIO = Scenario.SCENARIO;
+
+    /**
+     * The table <code>public.scenario_notification</code>.
+     */
+    public static final ScenarioNotification SCENARIO_NOTIFICATION = ScenarioNotification.SCENARIO_NOTIFICATION;
 
     /**
      * The table <code>public.scenario_route_definition</code>.

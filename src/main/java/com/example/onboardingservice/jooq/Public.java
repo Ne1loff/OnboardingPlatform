@@ -4,15 +4,13 @@
 package com.example.onboardingservice.jooq;
 
 
-import com.example.onboardingservice.jooq.tables.Scenario;
-import com.example.onboardingservice.jooq.tables.ScenarioRouteDefinition;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.example.onboardingservice.jooq.tables.*;
 import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -29,9 +27,29 @@ public class Public extends SchemaImpl {
     public static final Public PUBLIC = new Public();
 
     /**
+     * The table <code>public.onboarding_documents</code>.
+     */
+    public final OnboardingDocuments ONBOARDING_DOCUMENTS = OnboardingDocuments.ONBOARDING_DOCUMENTS;
+
+    /**
+     * The table <code>public.onboarding_hrs</code>.
+     */
+    public final OnboardingHrs ONBOARDING_HRS = OnboardingHrs.ONBOARDING_HRS;
+
+    /**
+     * The table <code>public.onboarding_properties</code>.
+     */
+    public final OnboardingProperties ONBOARDING_PROPERTIES = OnboardingProperties.ONBOARDING_PROPERTIES;
+
+    /**
      * The table <code>public.scenario</code>.
      */
     public final Scenario SCENARIO = Scenario.SCENARIO;
+
+    /**
+     * The table <code>public.scenario_notification</code>.
+     */
+    public final ScenarioNotification SCENARIO_NOTIFICATION = ScenarioNotification.SCENARIO_NOTIFICATION;
 
     /**
      * The table <code>public.scenario_route_definition</code>.
@@ -54,7 +72,11 @@ public class Public extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
+            OnboardingDocuments.ONBOARDING_DOCUMENTS,
+            OnboardingHrs.ONBOARDING_HRS,
+            OnboardingProperties.ONBOARDING_PROPERTIES,
             Scenario.SCENARIO,
+            ScenarioNotification.SCENARIO_NOTIFICATION,
             ScenarioRouteDefinition.SCENARIO_ROUTE_DEFINITION
         );
     }

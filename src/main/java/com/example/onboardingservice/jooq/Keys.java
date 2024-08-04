@@ -4,11 +4,8 @@
 package com.example.onboardingservice.jooq;
 
 
-import com.example.onboardingservice.jooq.tables.Scenario;
-import com.example.onboardingservice.jooq.tables.ScenarioRouteDefinition;
-import com.example.onboardingservice.jooq.tables.records.ScenarioRecord;
-import com.example.onboardingservice.jooq.tables.records.ScenarioRouteDefinitionRecord;
-
+import com.example.onboardingservice.jooq.tables.*;
+import com.example.onboardingservice.jooq.tables.records.*;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
@@ -26,6 +23,10 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final UniqueKey<OnboardingDocumentsRecord> ONBOARDING_DOCUMENTS_PKEY = Internal.createUniqueKey(OnboardingDocuments.ONBOARDING_DOCUMENTS, DSL.name("onboarding_documents_pkey"), new TableField[] { OnboardingDocuments.ONBOARDING_DOCUMENTS.KEY }, true);
+    public static final UniqueKey<OnboardingHrsRecord> ONBOARDING_HRS_PKEY = Internal.createUniqueKey(OnboardingHrs.ONBOARDING_HRS, DSL.name("onboarding_hrs_pkey"), new TableField[] { OnboardingHrs.ONBOARDING_HRS.CHAT_ID }, true);
+    public static final UniqueKey<OnboardingPropertiesRecord> ONBOARDING_PROPERTIES_PKEY = Internal.createUniqueKey(OnboardingProperties.ONBOARDING_PROPERTIES, DSL.name("onboarding_properties_pkey"), new TableField[] { OnboardingProperties.ONBOARDING_PROPERTIES.NAME }, true);
     public static final UniqueKey<ScenarioRecord> SCENARIO_PKEY = Internal.createUniqueKey(Scenario.SCENARIO, DSL.name("scenario_pkey"), new TableField[] { Scenario.SCENARIO.ID }, true);
-    public static final UniqueKey<ScenarioRouteDefinitionRecord> SCENARIO_ROUTE_DEFINITION_PKEY = Internal.createUniqueKey(ScenarioRouteDefinition.SCENARIO_ROUTE_DEFINITION, DSL.name("scenario_route_definition_pkey"), new TableField[] { ScenarioRouteDefinition.SCENARIO_ROUTE_DEFINITION.SCENARIO_NAME }, true);
+    public static final UniqueKey<ScenarioNotificationRecord> SCENARIO_NOTIFICATION_PKEY = Internal.createUniqueKey(ScenarioNotification.SCENARIO_NOTIFICATION, DSL.name("scenario_notification_pkey"), new TableField[] { ScenarioNotification.SCENARIO_NOTIFICATION.ID }, true);
+    public static final UniqueKey<ScenarioRouteDefinitionRecord> SCENARIO_ROUTE_DEFINITION_PKEY = Internal.createUniqueKey(ScenarioRouteDefinition.SCENARIO_ROUTE_DEFINITION, DSL.name("scenario_route_definition_pkey"), new TableField[] { ScenarioRouteDefinition.SCENARIO_ROUTE_DEFINITION.ID }, true);
 }
