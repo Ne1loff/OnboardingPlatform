@@ -8,6 +8,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ActionButton {
-    private String text;
-    private UUID actionId;
+    private String name;
+    private UUID nextActionId;
 }

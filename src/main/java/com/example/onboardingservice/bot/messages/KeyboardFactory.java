@@ -67,8 +67,8 @@ public class KeyboardFactory {
             List<InlineKeyboardButton> buttonRow = new ArrayList<>(maxInRow);
             for (var button : partition) {
                 var keyboardButton = InlineKeyboardButton.builder()
-                        .text(button.getText())
-                        .callbackData(ButtonActionUtils.generateButtonCallbackData(chatId, button.getActionId()))
+                        .text(button.getName())
+                        .callbackData(ButtonActionUtils.generateButtonCallbackData(chatId, button.getNextActionId()))
                         .build();
                 buttonRow.add(keyboardButton);
             }

@@ -17,7 +17,7 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
                 name: "Изменить сценарий",
                 id: crypto.randomUUID(),
                 nextActionId: null,
-                nextScenariosName: EMPTY_STRIGN,
+                nextScenariosId: EMPTY_STRIGN,
                 startFromBegin: false
             } satisfies ChangeScenariosActionType;
         case ActionFlowNodeType.FORWARD_MESSAGE:
@@ -62,7 +62,7 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
                 nextActionId: null,
                 buttons: [],
                 text: EMPTY_STRIGN,
-                isMarkdownText: false
+                markdownText: false
             } satisfies SendMessageActionType;
         default:
             throw new Error('No such value')

@@ -46,6 +46,9 @@ public class ActionContextImpl implements ActionContext {
 
     @Override
     public ActionContext restore(ActionContext context) {
+        if (context == null) {
+            return this;
+        }
         context.getParameters().forEach((key, value) -> parameters.computeIfAbsent(key, (it) -> value));
         return this;
     }

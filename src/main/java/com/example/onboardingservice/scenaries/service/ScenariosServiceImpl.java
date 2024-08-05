@@ -1,5 +1,6 @@
 package com.example.onboardingservice.scenaries.service;
 
+import com.example.onboardingservice.jooq.tables.pojos.ScenarioRouteDefinition;
 import com.example.onboardingservice.jooq.tables.records.ScenarioRecord;
 import com.example.onboardingservice.scenaries.ActionContext;
 import com.example.onboardingservice.scenaries.ContextConstants;
@@ -52,8 +53,25 @@ public class ScenariosServiceImpl implements ScenarioService {
 
     @Nullable
     @Override
-    public ScenariosMetadata findActiveScenariosMetadata(Long chatId) {
-        return findScenariosMetadata(it -> it.where(SCENARIO.CHAT_ID.eq(chatId).and(SCENARIO.IS_ACTIVE)));
+    public ScenariosMetadata findActiveScenariosMetadata(ActionContext context) {
+        var scenarios = findScenariosMetadata(it -> it.where(SCENARIO.CHAT_ID.eq(context.getChatId())
+                .and(SCENARIO.IS_ACTIVE)));
+
+        if (scenarios == null) {
+            return null;
+        }
+
+        var definition = jooq.selectFrom(SCENARIO_ROUTE_DEFINITION)
+                .where(SCENARIO_ROUTE_DEFINITION.ID.eq(scenarios.getRouteId()))
+                .fetchOptionalInto(ScenarioRouteDefinition.class)
+                .orElseThrow();
+
+        var includeTest = Boolean.parseBoolean(context.getParameters().getOrDefault(ContextConstants.INCLUDE_TEST_SCENARIOS, "false"));
+        return switch (ScenariosStatus.valueOf(definition.getStatus())) {
+            case TEST -> includeTest ? scenarios : null;
+            case PUBLISHED -> scenarios;
+            case DRAFT, ARCHIVED -> null;
+        };
     }
 
     @Override
@@ -70,6 +88,7 @@ public class ScenariosServiceImpl implements ScenarioService {
         jooq.insertInto(SCENARIO)
                 .set(SCENARIO.ID, metadata.getScenarioId())
                 .set(SCENARIO.SCENARIO_NAME, metadata.getScenarioName())
+                .set(SCENARIO.ROUTE_DEFINITION_ID, metadata.getRouteId())
                 .set(SCENARIO.CHAT_ID, context.getChatId())
                 .set(SCENARIO.FIRST_ACTION_ID, metadata.getRoute().getFirstActionId())
                 .set(SCENARIO.CURRENT_ACTION_ID, UUID.fromString(context.get(ContextConstants.ACTION_ID)))
@@ -92,7 +111,7 @@ public class ScenariosServiceImpl implements ScenarioService {
                 .execute();
 
         var newScenariosMetadata = findScenariosMetadata(it -> it.where(SCENARIO.CHAT_ID.eq(context.getChatId())
-                .and(SCENARIO.SCENARIO_NAME.eq(context.get(ContextConstants.SCENARIOS_NAME)))));
+                .and(SCENARIO.ID.eq(UUID.fromString(context.get(ContextConstants.SCENARIOS_ID))))));
 
         if (newScenariosMetadata == null) {
             newScenariosMetadata = initializeScenarios(context);
@@ -129,7 +148,7 @@ public class ScenariosServiceImpl implements ScenarioService {
                 .withCurrentActionId(scenarios.getCurrentActionId())
                 .build();
 
-        return new ScenariosMetadataImpl(scenarios.getId(), scenarios.getScenarioName(), route);
+        return new ScenariosMetadataImpl(scenarios.getId(), scenarios.getScenarioName(), scenarios.getRouteDefinitionId(), route);
     }
 
     private ScenariosMetadata initializeScenariosWithDescription(ActionContext context, ScenariosRouteDescription routeDescription) {
@@ -137,7 +156,7 @@ public class ScenariosServiceImpl implements ScenarioService {
         if (route == null) {
             return null;
         }
-        return new ScenariosMetadataImpl(UUID.randomUUID(), routeDescription.getName(), route);
+        return new ScenariosMetadataImpl(UUID.randomUUID(), routeDescription.getName(), routeDescription.getId(), route);
     }
 
     private List<ScenariosRouteDescription> getRouteDescriptions() {

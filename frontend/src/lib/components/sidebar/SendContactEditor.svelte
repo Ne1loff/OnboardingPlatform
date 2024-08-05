@@ -47,7 +47,11 @@
         $action.lastName = selectedContact.lastName ?? "";
     }
 
-    let selectedContact: any | null = null;
+    let selectedContact = $hrsItems.find(
+        (it) =>
+            (<HrType>it.id).firstName === $action.firstName &&
+            (<HrType>it.id).lastName === $action.lastName,
+    )?.id;
     let selectedIndex = 0;
 
     let numberInput: HTMLInputElement;

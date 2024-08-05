@@ -7,13 +7,11 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
+@Getter
 @RequiredArgsConstructor
 public class ScenariosMetadataImpl implements ScenariosMetadata {
-
-    @Getter
     private final UUID scenarioId;
-    @Getter
     private final String scenarioName;
-    @Getter
+    private final UUID routeId;
     private final ScenariosRoute route;
 }

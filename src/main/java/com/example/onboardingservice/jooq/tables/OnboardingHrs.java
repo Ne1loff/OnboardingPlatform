@@ -7,13 +7,12 @@ package com.example.onboardingservice.jooq.tables;
 import com.example.onboardingservice.jooq.Keys;
 import com.example.onboardingservice.jooq.Public;
 import com.example.onboardingservice.jooq.tables.records.OnboardingHrsRecord;
-import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
-import java.util.function.Function;
+import java.util.Collection;
 
 
 /**
@@ -58,11 +57,11 @@ public class OnboardingHrs extends TableImpl<OnboardingHrsRecord> {
     public final TableField<OnboardingHrsRecord, String> LAST_NAME = createField(DSL.name("last_name"), SQLDataType.VARCHAR(255), this, "");
 
     private OnboardingHrs(Name alias, Table<OnboardingHrsRecord> aliased) {
-        this(alias, aliased, null);
+        this(alias, aliased, (Field<?>[]) null, null);
     }
 
-    private OnboardingHrs(Name alias, Table<OnboardingHrsRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    private OnboardingHrs(Name alias, Table<OnboardingHrsRecord> aliased, Field<?>[] parameters, Condition where) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table(), where);
     }
 
     /**
@@ -84,10 +83,6 @@ public class OnboardingHrs extends TableImpl<OnboardingHrsRecord> {
      */
     public OnboardingHrs() {
         this(DSL.name("onboarding_hrs"), null);
-    }
-
-    public <O extends Record> OnboardingHrs(Table<O> child, ForeignKey<O, OnboardingHrsRecord> key) {
-        super(child, key, ONBOARDING_HRS);
     }
 
     @Override
@@ -139,27 +134,87 @@ public class OnboardingHrs extends TableImpl<OnboardingHrsRecord> {
         return new OnboardingHrs(name.getQualifiedName(), null);
     }
 
-    // -------------------------------------------------------------------------
-    // Row4 type methods
-    // -------------------------------------------------------------------------
-
+    /**
+     * Create an inline derived table from this table
+     */
     @Override
-    public Row4<Long, String, String, String> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public OnboardingHrs where(Condition condition) {
+        return new OnboardingHrs(getQualifiedName(), aliased() ? this : null, null, condition);
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     * Create an inline derived table from this table
      */
-    public <U> SelectField<U> mapping(Function4<? super Long, ? super String, ? super String, ? super String, ? extends U> from) {
-        return convertFrom(Records.mapping(from));
+    @Override
+    public OnboardingHrs where(Collection<? extends Condition> conditions) {
+        return where(DSL.and(conditions));
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
+     * Create an inline derived table from this table
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super Long, ? super String, ? super String, ? super String, ? extends U> from) {
-        return convertFrom(toType, Records.mapping(from));
+    @Override
+    public OnboardingHrs where(Condition... conditions) {
+        return where(DSL.and(conditions));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public OnboardingHrs where(Field<Boolean> condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public OnboardingHrs where(SQL condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public OnboardingHrs where(@Stringly.SQL String condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public OnboardingHrs where(@Stringly.SQL String condition, Object... binds) {
+        return where(DSL.condition(condition, binds));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public OnboardingHrs where(@Stringly.SQL String condition, QueryPart... parts) {
+        return where(DSL.condition(condition, parts));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public OnboardingHrs whereExists(Select<?> select) {
+        return where(DSL.exists(select));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public OnboardingHrs whereNotExists(Select<?> select) {
+        return where(DSL.notExists(select));
     }
 }

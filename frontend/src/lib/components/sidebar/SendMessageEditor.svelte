@@ -22,12 +22,12 @@
 
     let value: string;
     $: value = $action.text;
-    $action.isMarkdownText = true;
 
     const plugins: any[] = [];
 
     function handleChange(e: CustomEvent<{ value: string }>) {
         $action.text = e.detail.value;
+        $action.markdownText = true;
     }
 
     function createButton() {

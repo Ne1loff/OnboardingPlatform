@@ -27,7 +27,7 @@ public class ChangeScenariosActionHandler implements ActionHandler<ChangeScenari
 
     @Override
     public Optional<UUID> process(ChangeScenariosAction action, AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
-        context.put(ContextConstants.SCENARIOS_NAME, action.getNextScenariosName());
+        context.put(ContextConstants.SCENARIOS_ID, action.getNextScenariosId());
         context.put(ContextConstants.NEED_INIT, true);
         context.put(ContextConstants.START_FROM_BEGIN, action.isStartFromBegin());
 

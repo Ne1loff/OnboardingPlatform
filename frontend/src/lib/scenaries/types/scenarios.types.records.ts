@@ -13,7 +13,7 @@ export const ChangeScenariosActionRecord = Record({
     id: String,
     name: String,
     nextActionId: String.nullable(),
-    nextScenariosName: String.nullable(),
+    nextScenariosId: String.nullable(),
     startFromBegin: Boolean,
 });
 
@@ -58,7 +58,7 @@ export const SendMessageActionRecord = Record({
     nextActionId: String.nullable(),
     buttons: Array(ActionButtonRecord),
     text: String,
-    isMarkdownText: Boolean,
+    markdownText: Boolean,
 });
 
 export const ActionRecord = Union(

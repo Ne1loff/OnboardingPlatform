@@ -19,6 +19,7 @@
                 : data.scenarios
             : data.scenarios,
     );
+    $: console.log(data.scenarios);
 
     const actionsState: Map<string, Writable<ActionType>> = new Map();
     const hrs: Writable<HrsType> = writable(data.hrs);

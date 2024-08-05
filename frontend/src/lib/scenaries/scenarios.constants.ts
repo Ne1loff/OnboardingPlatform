@@ -20,7 +20,7 @@ export const mainScenaries: ScenariosType = {
                 "nextActionId": "1f268027-6601-45a6-b9cc-629407557af8",
                 "name": "Приветствие",
                 "text": "Привет, я помощник компании \"НПЦ КСБ\" и \"КСБ-СОФТ\". Я помогаю новым сотрудникам освоиться.\nПожалуйста, подскажи, как тебя зовут?",
-                "isMarkdownText": false,
+                "markdownText": false,
                 "buttons": []
             },
             {
@@ -38,7 +38,7 @@ export const mainScenaries: ScenariosType = {
                 "nextActionId": null,
                 "name": "Главное меню",
                 "text": "Привет, $user_name, приятно познакомится!\nМожет я могу чем-то помочь?",
-                "isMarkdownText": false,
+                "markdownText": false,
                 "buttons": [
                     {
                         "name": "Задать вопрос",
@@ -61,28 +61,28 @@ export const mainScenaries: ScenariosType = {
                 "id": "339a9c70-af30-48b6-8b89-ccb9f06075e4",
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Запустить сценарий - Задать вопрос",
-                "nextScenariosName": "question-scenarios",
+                "nextScenariosId": "1991fe8d-186f-4dc3-bc32-58a51bc9b60d",
                 "startFromBegin": true
             },
             {
                 "id": "629c7a2a-d36a-4c55-8157-0bb99e8958d2",
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Запустить сценарий - Контакты HR",
-                "nextScenariosName": "",
+                "nextScenariosId": null,
                 "startFromBegin": true
             },
             {
                 "id": "72b196c1-032f-46ba-a81e-2717b3722d55",
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Запустить сценарий - Документы",
-                "nextScenariosName": "documents-scenarios",
+                "nextScenariosId": "d3de6e5c-9d52-4be0-a9b9-b936f41f66ca",
                 "startFromBegin": true
             },
             {
                 "id": "0362ab74-20c1-44e5-82ee-ef77c9999b29",
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Запустить сценарий - Как пройти",
-                "nextScenariosName": "",
+                "nextScenariosId": null,
                 "startFromBegin": true
             },
         ]
@@ -105,7 +105,7 @@ export const documentsScenarios: ScenariosType = {
                 "nextActionId": null,
                 "name": "Уточннение документа",
                 "text": "Что вы хотите оформить?",
-                "isMarkdownText": false,
+                "markdownText": false,
                 "buttons": [
                     {
                         "name": "Пропуск",
@@ -135,7 +135,7 @@ export const documentsScenarios: ScenariosType = {
                 "id": "3e7f650d-1c13-4a39-bb56-188304222fb7",
                 "nextActionId": null,
                 "name": "Запустить сценарий - Главное меню",
-                "nextScenariosName": "main-scenarios",
+                "nextScenariosId": "fb2c044a-ff40-41b2-beda-91c8ca3040ff",
                 "startFromBegin": false
             }
         ]
@@ -158,7 +158,7 @@ export const questionScenarios: ScenariosType = {
                 "nextActionId": "4ceb84f0-a55b-4c04-a4a5-34c8d66461a6",
                 "name": "Подготовка",
                 "text": "Задайте вопрос, постараюсь на него ответить)",
-                "isMarkdownText": false,
+                "markdownText": false,
                 "buttons": []
             },
             {
@@ -176,7 +176,7 @@ export const questionScenarios: ScenariosType = {
                 "nextActionId": "f9babeee-530d-41d3-9c66-51ab919d6f65",
                 "name": "Ответ на вопрос",
                 "text": "На данный момент, я не могу ответить на этот вопрос: $question\nПоэтому пересылаю его HR-у",
-                "isMarkdownText": false,
+                "markdownText": false,
                 "buttons": []
             },
             {
@@ -189,7 +189,7 @@ export const questionScenarios: ScenariosType = {
                 "id": "3e7f650d-1c13-4a39-bb56-188304222fb7",
                 "nextActionId": null,
                 "name": "Запустить сценарий - Главное меню",
-                "nextScenariosName": "main-scenarios",
+                "nextScenariosId": "fb2c044a-ff40-41b2-beda-91c8ca3040ff",
                 "startFromBegin": false
             }
         ]

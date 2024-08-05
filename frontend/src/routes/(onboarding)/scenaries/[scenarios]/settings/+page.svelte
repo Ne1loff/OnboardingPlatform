@@ -34,7 +34,6 @@
     const scenarios = getContext<Writable<ScenariosType>>("currentScenarios");
     const scenariesCopy = writable<ScenariosType>({ ...$scenarios });
     const matcherCopy = writable<MatcherType>({ ...$scenariesCopy.matcher });
-    let checked = false;
 
     function close() {
         const href = resolveRoute("/scenaries/[scenarios]", {
@@ -77,18 +76,6 @@
         }
     }
 
-    function wasChanges(current: ScenariosType, copy: ScenariosType, matcher: MatcherType): boolean {
-        let result = false;
-
-        result = result || current.name !== copy.name;
-        result = result || current.firstActionId !== copy.firstActionId;
-        result = result || current.matcher.type !== matcher.type;
-        result = result || current.matcher.value !== matcher.value;
-        result = result || current.status !== copy.status;
-
-        return result;
-    }
-
     function selectAction(id: string | undefined) {
         if (!id) return;
         $scenariesCopy.firstActionId = id;
@@ -126,8 +113,6 @@
     };
 
     const items = getActions();
-    $: checked = wasChanges($scenarios, $scenariesCopy, $matcherCopy);
-
     $: invalid =
         $matcherCopy.type === "COMMAND" && !$matcherCopy.value.startsWith("/");
     $: helperText =
@@ -197,7 +182,6 @@
     </ModalBody>
     <ModalFooter
         primaryButtonText="Сохранить"
-        primaryButtonDisabled={!checked}
         secondaryButtonText="Отмена"
         on:click:button--secondary={close}
     />

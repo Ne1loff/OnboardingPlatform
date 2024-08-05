@@ -25,7 +25,7 @@
 
     export let buttonData: Writable<ActionButtonType>;
     export let parent: Writable<SendMessageActionType>;
-    export let index: string | number;
+    export let index: number;
 
     const dispatch = createEventDispatcher();
     const { getEdge } = useSvelteFlow();
@@ -34,13 +34,17 @@
 
     let items: DropdownItem[];
     $: selectedAction = $buttonData.nextActionId;
+    $: updateParent($buttonData);
+
+    function updateParent(buttonData: ActionButtonType) {
+        const button  = $parent.buttons[index];
+        button.name = buttonData.name;
+        button.nextActionId = buttonData.nextActionId;
+    }
 
     const selectAction = (id: string) => {
         const prevConnectedNodeId = $buttonData.nextActionId;
-        $parent.buttons = $parent.buttons.map((it) =>
-            it.name === $buttonData.name ? { ...it, nextActionId: id } : it,
-        );
-
+        
         buttonData.update((it) => {
             it.nextActionId = id;
             return it;

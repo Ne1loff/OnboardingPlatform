@@ -22,7 +22,9 @@
         createButtonNode,
         createConnection,
         createEdge,
+        createEntryEdge,
         getButtonNodeId,
+        getRealNextActionId,
         scenariosToFlow,
     } from "$lib/scenaries/scenarios.flow";
     import {
@@ -89,7 +91,13 @@
     let nodes: Writable<ActionsNodeType[]> = writable([]);
     let edges: Writable<Edge[]> = writable([]);
 
+    let doNotUpdate = false;
     const updateFlow = async (scenarios: ScenariosType) => {
+        if (doNotUpdate) {
+            doNotUpdate = false;
+            return;
+        }
+
         const flow = scenariosToFlow(scenarios);
         edges.set([]);
         nodes.set([]);
@@ -406,10 +414,10 @@
     };
 
     const onEdgeCreate = (connection: Connection) => {
-        const newEdge = createEdge(connection);
+        const actionNode = <ActionNodeType>getNode(connection.source);
+        const newEdge = actionNode.type == ActionFlowNodeType.ENTRY_POINT ? createEntryEdge(connection) : createEdge(connection);
         edges.update((edges) => addEdge(newEdge, edges));
 
-        const actionNode = <ActionNodeType>getNode(connection.source);
         if (actionNode.parentId) {
             let parentNode = <ActionNodeType>getNode(actionNode.parentId);
             const ids = connection.source.split("-b-");
@@ -425,6 +433,12 @@
                 if (ActionButtonRecord.guard(it)) {
                     it.nextActionId = connection.target;
                 }
+                return it;
+            });
+        } else if (actionNode.type == ActionFlowNodeType.ENTRY_POINT) {
+            doNotUpdate = true;
+            scenarios.update(it => {
+                it.firstActionId = getRealNextActionId(connection.target);
                 return it;
             });
         } else {
@@ -472,7 +486,11 @@
         nodesConnectable={!$disabledEditing}
         elementsSelectable={!$disabledEditing}
     >
-        <Panel position="top-left"><h1 style="user-select: none;">Редактор маршрутов сценария</h1></Panel>
+        <Panel position="top-left"
+            ><h1 style="user-select: none;">
+                Редактор маршрутов сценария
+            </h1></Panel
+        >
         <Panel position="top-right">
             {#if sidebarIsOpen && !!selectedNode}
                 <Sidebar bind:open={sidebarIsOpen} node={selectedNode} />

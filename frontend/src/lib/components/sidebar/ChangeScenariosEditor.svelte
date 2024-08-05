@@ -21,7 +21,7 @@
     const scenariesItems = derived<Writable<ScenariosType[]>, ComboBoxItem[]>(
         scenaries,
         ($scenaries) =>
-            $scenaries.map((it) => ({ id: it.name, text: it.name })),
+            $scenaries.map((it) => ({ id: it.id, text: it.name })),
     );
 
     function shouldFilterItem(item: ComboBoxItem, value: string): boolean {
@@ -40,12 +40,12 @@
             titleText="Запускаемый сценарий"
             placeholder="Сценарий не выбран"
             direction="top"
-            selectedId={$action.nextScenariosName}
+            selectedId={$action.nextScenariosId}
             items={$scenariesItems}
             {shouldFilterItem}
             on:select={({ detail }) =>
-                ($action.nextScenariosName = detail.selectedId)}
-            on:clear={() => ($action.nextScenariosName = null)}
+                ($action.nextScenariosId = detail.selectedId)}
+            on:clear={() => ($action.nextScenariosId = null)}
         />
     </FormGroup>
     <FormGroup>

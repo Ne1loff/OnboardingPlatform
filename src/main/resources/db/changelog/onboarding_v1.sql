@@ -58,4 +58,14 @@ CREATE TABLE scenario_notification
     delay          VARCHAR(255) NOT NULL,
     status         VARCHAR(255) NOT NULL,
     next_execution TIMESTAMPTZ  NOT NULL
-)
+);
+
+--changeset sergey_zhilkin:remove_scenario_route_definition_first_action_id_not_nullable
+
+ALTER TABLE scenario_route_definition
+    ALTER COLUMN first_action_id DROP NOT NULL;
+
+--changeset sergey_zhilkin:add_route_definition_id_to_scenarios
+
+ALTER TABLE scenario
+    ADD COLUMN route_definition_id UUID NOT NULL DEFAULT gen_random_uuid();

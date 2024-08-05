@@ -7,14 +7,13 @@ package com.example.onboardingservice.jooq.tables;
 import com.example.onboardingservice.jooq.Keys;
 import com.example.onboardingservice.jooq.Public;
 import com.example.onboardingservice.jooq.tables.records.ScenarioRecord;
-import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
+import java.util.Collection;
 import java.util.UUID;
-import java.util.function.Function;
 
 
 /**
@@ -73,12 +72,17 @@ public class Scenario extends TableImpl<ScenarioRecord> {
      */
     public final TableField<ScenarioRecord, JSONB> CONTEXT = createField(DSL.name("context"), SQLDataType.JSONB, this, "");
 
+    /**
+     * The column <code>public.scenario.route_definition_id</code>.
+     */
+    public final TableField<ScenarioRecord, UUID> ROUTE_DEFINITION_ID = createField(DSL.name("route_definition_id"), SQLDataType.UUID.nullable(false).defaultValue(DSL.field(DSL.raw("gen_random_uuid()"), SQLDataType.UUID)), this, "");
+
     private Scenario(Name alias, Table<ScenarioRecord> aliased) {
-        this(alias, aliased, null);
+        this(alias, aliased, (Field<?>[]) null, null);
     }
 
-    private Scenario(Name alias, Table<ScenarioRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    private Scenario(Name alias, Table<ScenarioRecord> aliased, Field<?>[] parameters, Condition where) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table(), where);
     }
 
     /**
@@ -100,10 +104,6 @@ public class Scenario extends TableImpl<ScenarioRecord> {
      */
     public Scenario() {
         this(DSL.name("scenario"), null);
-    }
-
-    public <O extends Record> Scenario(Table<O> child, ForeignKey<O, ScenarioRecord> key) {
-        super(child, key, SCENARIO);
     }
 
     @Override
@@ -155,27 +155,87 @@ public class Scenario extends TableImpl<ScenarioRecord> {
         return new Scenario(name.getQualifiedName(), null);
     }
 
-    // -------------------------------------------------------------------------
-    // Row7 type methods
-    // -------------------------------------------------------------------------
-
+    /**
+     * Create an inline derived table from this table
+     */
     @Override
-    public Row7<UUID, String, Long, UUID, Boolean, UUID, JSONB> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Scenario where(Condition condition) {
+        return new Scenario(getQualifiedName(), aliased() ? this : null, null, condition);
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     * Create an inline derived table from this table
      */
-    public <U> SelectField<U> mapping(Function7<? super UUID, ? super String, ? super Long, ? super UUID, ? super Boolean, ? super UUID, ? super JSONB, ? extends U> from) {
-        return convertFrom(Records.mapping(from));
+    @Override
+    public Scenario where(Collection<? extends Condition> conditions) {
+        return where(DSL.and(conditions));
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
+     * Create an inline derived table from this table
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function7<? super UUID, ? super String, ? super Long, ? super UUID, ? super Boolean, ? super UUID, ? super JSONB, ? extends U> from) {
-        return convertFrom(toType, Records.mapping(from));
+    @Override
+    public Scenario where(Condition... conditions) {
+        return where(DSL.and(conditions));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Scenario where(Field<Boolean> condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public Scenario where(SQL condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public Scenario where(@Stringly.SQL String condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public Scenario where(@Stringly.SQL String condition, Object... binds) {
+        return where(DSL.condition(condition, binds));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public Scenario where(@Stringly.SQL String condition, QueryPart... parts) {
+        return where(DSL.condition(condition, parts));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Scenario whereExists(Select<?> select) {
+        return where(DSL.exists(select));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Scenario whereNotExists(Select<?> select) {
+        return where(DSL.notExists(select));
     }
 }

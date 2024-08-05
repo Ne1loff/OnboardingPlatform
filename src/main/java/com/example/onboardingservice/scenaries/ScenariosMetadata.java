@@ -8,6 +8,8 @@ public interface ScenariosMetadata {
 
     String getScenarioName();
 
+    UUID getRouteId();
+
     ScenariosRoute getRoute();
 
 }

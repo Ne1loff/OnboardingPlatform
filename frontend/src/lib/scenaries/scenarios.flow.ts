@@ -74,7 +74,7 @@ export function scenariosToFlow(scenatios: ScenariosType): ScenariosFlow {
             position: { x: ++counter * 260, y: 0 }
         }];
 
-
+        console.log(it, getFlowType(it));
         if (SendMessageActionRecord.guard(it)) {
             let index = 0;
             it.buttons.forEach(button => {
@@ -92,7 +92,7 @@ export function scenariosToFlow(scenatios: ScenariosType): ScenariosFlow {
     edges.push(...buttonsConnection.map(it => createEdge(it)));
     
     if (scenatios.firstActionId) {
-        edges.push(createEdge(createConnection("start", scenatios.firstActionId)));
+        edges.push(createEntryEdge(createConnection("start", scenatios.firstActionId)));
     }
 
     const edgesStore = writable<Edge[]>(edges);
@@ -106,14 +106,25 @@ export const flowToScenarios = (scenarios: ScenariosType, nodes: ActionsNodeType
         if (node.type !== ActionFlowNodeType.ACTION_LINK && CORE_ACTION_FLOW_NODE_TYPES.includes(<ActionFlowNodeType> node.type)) {
             const actionNode = <ActionNodeType> node;
             const data = get(actionNode.data.flow);
-            actions.push(data);
+            actions.push({...data, nextActionId: getRealNextActionId(data.nextActionId)});
         }
     }
 
     scenarios.route.actions = actions;
-
+    console.log(scenarios);
+    
     return scenarios;
 } 
+
+export const getRealNextActionId = (nextActionId: string | null): string | null => {
+    const linkIdentifier = ":link:";
+    const linkIndex = nextActionId?.indexOf(linkIdentifier);
+    if (linkIndex && linkIndex !== -1) {
+        return nextActionId!.substring(0, linkIndex);
+    }
+
+    return nextActionId;
+}
 
 export const createButtonNode = (button: ActionButtonType, parentId: string, index: number): ActionButtonNode => {
     const id = getButtonNodeId(parentId, index);
@@ -131,6 +142,20 @@ export const createButtonNode = (button: ActionButtonType, parentId: string, ind
 
 export const createEdge = ({ source, target, sourceHandle, targetHandle }: Connection): Edge => ({
     id: getEdgeId(source, target),
+    source,
+    target,
+    sourceHandle,
+    targetHandle,
+    type: 'deletable',
+    markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 16,
+        height: 16,
+    }
+});
+
+export const createEntryEdge = ({ source, target, sourceHandle, targetHandle }: Connection): Edge => ({
+    id: "entry-edge",
     source,
     target,
     sourceHandle,

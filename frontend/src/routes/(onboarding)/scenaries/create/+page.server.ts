@@ -9,12 +9,11 @@ type ScenariosCreateResponse = {
 }
 
 export const load = (async ({ fetch }) => {
-    const dummyId = crypto.randomUUID();
     const scenarios = {
         id: "",
         status: "DRAFT",
         name: "",
-        firstActionId: dummyId,
+        firstActionId: null,
         matcher: {
             type: "COMMAND",
             value: ""

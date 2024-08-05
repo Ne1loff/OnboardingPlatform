@@ -7,15 +7,14 @@ package com.example.onboardingservice.jooq.tables;
 import com.example.onboardingservice.jooq.Keys;
 import com.example.onboardingservice.jooq.Public;
 import com.example.onboardingservice.jooq.tables.records.ScenarioNotificationRecord;
-import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.UUID;
-import java.util.function.Function;
 
 
 /**
@@ -75,11 +74,11 @@ public class ScenarioNotification extends TableImpl<ScenarioNotificationRecord> 
     public final TableField<ScenarioNotificationRecord, OffsetDateTime> NEXT_EXECUTION = createField(DSL.name("next_execution"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "");
 
     private ScenarioNotification(Name alias, Table<ScenarioNotificationRecord> aliased) {
-        this(alias, aliased, null);
+        this(alias, aliased, (Field<?>[]) null, null);
     }
 
-    private ScenarioNotification(Name alias, Table<ScenarioNotificationRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    private ScenarioNotification(Name alias, Table<ScenarioNotificationRecord> aliased, Field<?>[] parameters, Condition where) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table(), where);
     }
 
     /**
@@ -103,10 +102,6 @@ public class ScenarioNotification extends TableImpl<ScenarioNotificationRecord> 
      */
     public ScenarioNotification() {
         this(DSL.name("scenario_notification"), null);
-    }
-
-    public <O extends Record> ScenarioNotification(Table<O> child, ForeignKey<O, ScenarioNotificationRecord> key) {
-        super(child, key, SCENARIO_NOTIFICATION);
     }
 
     @Override
@@ -158,27 +153,87 @@ public class ScenarioNotification extends TableImpl<ScenarioNotificationRecord> 
         return new ScenarioNotification(name.getQualifiedName(), null);
     }
 
-    // -------------------------------------------------------------------------
-    // Row7 type methods
-    // -------------------------------------------------------------------------
-
+    /**
+     * Create an inline derived table from this table
+     */
     @Override
-    public Row7<UUID, Long, String, Boolean, String, String, OffsetDateTime> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public ScenarioNotification where(Condition condition) {
+        return new ScenarioNotification(getQualifiedName(), aliased() ? this : null, null, condition);
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     * Create an inline derived table from this table
      */
-    public <U> SelectField<U> mapping(Function7<? super UUID, ? super Long, ? super String, ? super Boolean, ? super String, ? super String, ? super OffsetDateTime, ? extends U> from) {
-        return convertFrom(Records.mapping(from));
+    @Override
+    public ScenarioNotification where(Collection<? extends Condition> conditions) {
+        return where(DSL.and(conditions));
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
+     * Create an inline derived table from this table
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function7<? super UUID, ? super Long, ? super String, ? super Boolean, ? super String, ? super String, ? super OffsetDateTime, ? extends U> from) {
-        return convertFrom(toType, Records.mapping(from));
+    @Override
+    public ScenarioNotification where(Condition... conditions) {
+        return where(DSL.and(conditions));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public ScenarioNotification where(Field<Boolean> condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public ScenarioNotification where(SQL condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public ScenarioNotification where(@Stringly.SQL String condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public ScenarioNotification where(@Stringly.SQL String condition, Object... binds) {
+        return where(DSL.condition(condition, binds));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public ScenarioNotification where(@Stringly.SQL String condition, QueryPart... parts) {
+        return where(DSL.condition(condition, parts));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public ScenarioNotification whereExists(Select<?> select) {
+        return where(DSL.exists(select));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public ScenarioNotification whereNotExists(Select<?> select) {
+        return where(DSL.notExists(select));
     }
 }

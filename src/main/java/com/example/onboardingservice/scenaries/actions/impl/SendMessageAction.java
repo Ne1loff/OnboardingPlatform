@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 public class SendMessageAction extends AbstractButtonsAction {
     private String text;
-    private boolean isMarkdownText;
+    private boolean markdownText;
 }

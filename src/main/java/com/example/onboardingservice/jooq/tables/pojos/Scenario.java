@@ -25,6 +25,7 @@ public class Scenario implements Serializable {
     private Boolean isActive;
     private UUID firstActionId;
     private JSONB context;
+    private UUID routeDefinitionId;
 
     public Scenario() {}
 
@@ -36,6 +37,7 @@ public class Scenario implements Serializable {
         this.isActive = value.isActive;
         this.firstActionId = value.firstActionId;
         this.context = value.context;
+        this.routeDefinitionId = value.routeDefinitionId;
     }
 
     public Scenario(
@@ -45,7 +47,8 @@ public class Scenario implements Serializable {
         UUID currentActionId,
         Boolean isActive,
         UUID firstActionId,
-        JSONB context
+        JSONB context,
+        UUID routeDefinitionId
     ) {
         this.id = id;
         this.scenarioName = scenarioName;
@@ -54,6 +57,7 @@ public class Scenario implements Serializable {
         this.isActive = isActive;
         this.firstActionId = firstActionId;
         this.context = context;
+        this.routeDefinitionId = routeDefinitionId;
     }
 
     /**
@@ -154,6 +158,20 @@ public class Scenario implements Serializable {
         this.context = context;
     }
 
+    /**
+     * Getter for <code>public.scenario.route_definition_id</code>.
+     */
+    public UUID getRouteDefinitionId() {
+        return this.routeDefinitionId;
+    }
+
+    /**
+     * Setter for <code>public.scenario.route_definition_id</code>.
+     */
+    public void setRouteDefinitionId(UUID routeDefinitionId) {
+        this.routeDefinitionId = routeDefinitionId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -205,6 +223,12 @@ public class Scenario implements Serializable {
         }
         else if (!this.context.equals(other.context))
             return false;
+        if (this.routeDefinitionId == null) {
+            if (other.routeDefinitionId != null)
+                return false;
+        }
+        else if (!this.routeDefinitionId.equals(other.routeDefinitionId))
+            return false;
         return true;
     }
 
@@ -219,6 +243,7 @@ public class Scenario implements Serializable {
         result = prime * result + ((this.isActive == null) ? 0 : this.isActive.hashCode());
         result = prime * result + ((this.firstActionId == null) ? 0 : this.firstActionId.hashCode());
         result = prime * result + ((this.context == null) ? 0 : this.context.hashCode());
+        result = prime * result + ((this.routeDefinitionId == null) ? 0 : this.routeDefinitionId.hashCode());
         return result;
     }
 
@@ -233,6 +258,7 @@ public class Scenario implements Serializable {
         sb.append(", ").append(isActive);
         sb.append(", ").append(firstActionId);
         sb.append(", ").append(context);
+        sb.append(", ").append(routeDefinitionId);
 
         sb.append(")");
         return sb.toString();

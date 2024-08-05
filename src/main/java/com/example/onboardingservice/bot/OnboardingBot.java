@@ -7,7 +7,6 @@ import com.example.onboardingservice.scenaries.ScenarioService;
 import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import com.example.onboardingservice.scenaries.actions.Action;
 import com.example.onboardingservice.scenaries.handlers.ActionHandler;
-import com.example.onboardingservice.scenaries.model.enumeration.ScenariosStartEventType;
 import com.example.onboardingservice.scenaries.utils.ButtonActionUtils;
 import com.example.onboardingservice.scenaries.utils.InitScenariosCommandUtils;
 import com.example.onboardingservice.service.HrsService;
@@ -60,7 +59,7 @@ public class OnboardingBot extends TelegramLongPollingBot {
             context = scenarioService.buildContext(chatId);
 
             context.put(ContextConstants.CHAT_ID, chatId);
-            context.put(ScenariosStartEventType.BUTTON.name(), messageText);
+            context.put(ContextConstants.ACTION_ID, callbackData.actionId());
 
         } else {
             final var messageText = update.getMessage().getText();
@@ -75,7 +74,8 @@ public class OnboardingBot extends TelegramLongPollingBot {
         final var isTestUser = hrsService.isHrChatId(context.getChatId());
         context.put(ContextConstants.INCLUDE_TEST_SCENARIOS, isTestUser);
 
-        metadata = scenarioService.findActiveScenariosMetadata(chatId);
+        //FIXME: переключать сценарии по запросу
+        metadata = scenarioService.findActiveScenariosMetadata(context);
         // meta == null => new chat
         if (metadata == null) {
             metadata = scenarioService.initializeScenarios(context);
@@ -118,6 +118,7 @@ public class OnboardingBot extends TelegramLongPollingBot {
                     hasNext = true;
                 }
             } while (hasNext);
+            scenarioService.saveScenariosMetadata(context, metadata);
         } catch (Exception exception) {
             log.error("Telegram API exception", exception);
             throw new RuntimeException(exception);

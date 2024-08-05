@@ -82,13 +82,15 @@
         class="edgeButtonContainer nodrag nopan"
         style:transform="translate(-50%, -50%) translate({labelX}px,{labelY}px)"
     >
-        <button
-            class="edgeButton"
-            on:click={onEdgeClick}
-            disabled={$disabledEditing}
-        >
-            ×
-        </button>
+        {#if id !== "entry-edge"}
+            <button
+                class="edgeButton"
+                on:click={onEdgeClick}
+                disabled={$disabledEditing}
+            >
+                ×
+            </button>
+        {/if}
     </div>
 </EdgeLabelRenderer>
 <BaseEdge path={edgePath} {markerEnd} {style} />

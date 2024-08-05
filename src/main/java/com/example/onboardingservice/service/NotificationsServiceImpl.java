@@ -1,16 +1,14 @@
 package com.example.onboardingservice.service;
 
-import com.example.onboardingservice.bot.messages.MessageFactory;
+import com.example.onboardingservice.jooq.Tables;
 import com.example.onboardingservice.jooq.tables.daos.ScenarioNotificationDao;
 import com.example.onboardingservice.jooq.tables.pojos.ScenarioNotification;
 import com.example.onboardingservice.model.NotificationCommand;
 import com.example.onboardingservice.model.NotificationStatus;
 import com.example.onboardingservice.scenaries.model.enumeration.NotificationMode;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,24 +21,9 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationsServiceImpl implements NotificationsService, NotificationNotifier {
+public class NotificationsServiceImpl implements NotificationsService {
     private static final ZoneOffset SYSTEM_OFFSET = OffsetDateTime.now().getOffset();
     private final ScenarioNotificationDao notificationDao;
-    private final AbsSender sender;
-
-    @Override
-    @SneakyThrows
-    @Transactional
-    public void notify(ScenarioNotification notification) {
-        var message = MessageFactory.createSendMessage(notification.getChatId(), notification.getMessage());
-        sender.execute(message);
-
-        if (notification.getRepeat()) {
-            updateNotificationNextExecution(notification);
-        } else {
-            updateNotificationStatus(notification.getId(), NotificationStatus.DONE);
-        }
-    }
 
     @Override
     @Transactional
@@ -84,7 +67,13 @@ public class NotificationsServiceImpl implements NotificationsService, Notificat
 
     @Override
     public List<ScenarioNotification> findNotificationsForNext(LocalDateTime time) {
-        return notificationDao.fetchRangeOfNextExecution(OffsetDateTime.MIN, time.atOffset(SYSTEM_OFFSET));
+        return notificationDao.ctx().selectFrom(Tables.SCENARIO_NOTIFICATION)
+                .where(Tables.SCENARIO_NOTIFICATION.STATUS.eq(NotificationStatus.WAITING.toString())
+                        .and(Tables.SCENARIO_NOTIFICATION.NEXT_EXECUTION.between(OffsetDateTime.now().minusHours(3), time.atOffset(SYSTEM_OFFSET))))
+                .orderBy(Tables.SCENARIO_NOTIFICATION.NEXT_EXECUTION.asc())
+                .fetchStream()
+                .map(it -> it.into(ScenarioNotification.class))
+                .toList();
     }
 
     @Override

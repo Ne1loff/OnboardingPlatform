@@ -11,8 +11,9 @@ public interface ScenarioService {
     ScenariosMetadata initializeScenarios(ActionContext context);
 
     @Nullable
-    ScenariosMetadata findActiveScenariosMetadata(Long chatId);
+    ScenariosMetadata findActiveScenariosMetadata(ActionContext context);
 
+    @Nullable
     ActionContext findActiveContext(Long chatId);
 
     void saveScenariosMetadata(ActionContext context, ScenariosMetadata metadata);

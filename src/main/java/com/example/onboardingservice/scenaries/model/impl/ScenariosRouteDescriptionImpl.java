@@ -22,8 +22,8 @@ public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription 
     @Override
     public ScenariosRoute build(ActionContext context) {
 
-        if (context.containsKey(ContextConstants.SCENARIOS_NAME)) {
-            if (context.get(ContextConstants.SCENARIOS_NAME).equals(name)) {
+        if (context.containsKey(ContextConstants.SCENARIOS_ID)) {
+            if (id.equals(UUID.fromString(context.get(ContextConstants.SCENARIOS_ID)))) {
                 return ScenariosRouteImpl.builder()
                         .withFirstActionId(firstActionId)
                         .withActions(route.getActions())

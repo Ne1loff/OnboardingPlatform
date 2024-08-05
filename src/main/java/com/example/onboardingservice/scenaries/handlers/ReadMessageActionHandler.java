@@ -8,7 +8,6 @@ import com.example.onboardingservice.scenaries.actions.impl.ReadMessageAction;
 import com.example.onboardingservice.service.NotificationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -73,13 +72,5 @@ public class ReadMessageActionHandler implements ActionHandler<ReadMessageAction
         }
 
         return action.getNextActionId().filter(it -> !sendMessageStatus.getOrDefault(chatId, true));
-    }
-
-    private void sendTimeoutMessage(AbsSender sender, SendMessage sendMessage) {
-        try {
-            sender.execute(sendMessage);
-        } catch (Exception exception) {
-            throw new RuntimeException(exception);
-        }
     }
 }

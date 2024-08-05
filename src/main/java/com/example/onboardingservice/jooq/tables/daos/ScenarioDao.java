@@ -162,4 +162,19 @@ public class ScenarioDao extends AbstractSpringDAOImpl<ScenarioRecord, com.examp
     public List<com.example.onboardingservice.jooq.tables.pojos.Scenario> fetchByContext(JSONB... values) {
         return fetch(Scenario.SCENARIO.CONTEXT, values);
     }
+
+    /**
+     * Fetch records that have <code>route_definition_id BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<com.example.onboardingservice.jooq.tables.pojos.Scenario> fetchRangeOfRouteDefinitionId(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Scenario.SCENARIO.ROUTE_DEFINITION_ID, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>route_definition_id IN (values)</code>
+     */
+    public List<com.example.onboardingservice.jooq.tables.pojos.Scenario> fetchByRouteDefinitionId(UUID... values) {
+        return fetch(Scenario.SCENARIO.ROUTE_DEFINITION_ID, values);
+    }
 }

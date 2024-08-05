@@ -7,14 +7,13 @@ package com.example.onboardingservice.jooq.tables;
 import com.example.onboardingservice.jooq.Keys;
 import com.example.onboardingservice.jooq.Public;
 import com.example.onboardingservice.jooq.tables.records.ScenarioRouteDefinitionRecord;
-import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
+import java.util.Collection;
 import java.util.UUID;
-import java.util.function.Function;
 
 
 /**
@@ -46,7 +45,7 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
     /**
      * The column <code>public.scenario_route_definition.first_action_id</code>.
      */
-    public final TableField<ScenarioRouteDefinitionRecord, UUID> FIRST_ACTION_ID = createField(DSL.name("first_action_id"), SQLDataType.UUID.nullable(false), this, "");
+    public final TableField<ScenarioRouteDefinitionRecord, UUID> FIRST_ACTION_ID = createField(DSL.name("first_action_id"), SQLDataType.UUID, this, "");
 
     /**
      * The column <code>public.scenario_route_definition.route_source</code>.
@@ -69,11 +68,11 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
     public final TableField<ScenarioRouteDefinitionRecord, String> STATUS = createField(DSL.name("status"), SQLDataType.VARCHAR(255).nullable(false).defaultValue(DSL.field(DSL.raw("'DRAFT'::character varying"), SQLDataType.VARCHAR)), this, "");
 
     private ScenarioRouteDefinition(Name alias, Table<ScenarioRouteDefinitionRecord> aliased) {
-        this(alias, aliased, null);
+        this(alias, aliased, (Field<?>[]) null, null);
     }
 
-    private ScenarioRouteDefinition(Name alias, Table<ScenarioRouteDefinitionRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    private ScenarioRouteDefinition(Name alias, Table<ScenarioRouteDefinitionRecord> aliased, Field<?>[] parameters, Condition where) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table(), where);
     }
 
     /**
@@ -97,10 +96,6 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
      */
     public ScenarioRouteDefinition() {
         this(DSL.name("scenario_route_definition"), null);
-    }
-
-    public <O extends Record> ScenarioRouteDefinition(Table<O> child, ForeignKey<O, ScenarioRouteDefinitionRecord> key) {
-        super(child, key, SCENARIO_ROUTE_DEFINITION);
     }
 
     @Override
@@ -152,27 +147,87 @@ public class ScenarioRouteDefinition extends TableImpl<ScenarioRouteDefinitionRe
         return new ScenarioRouteDefinition(name.getQualifiedName(), null);
     }
 
-    // -------------------------------------------------------------------------
-    // Row6 type methods
-    // -------------------------------------------------------------------------
-
+    /**
+     * Create an inline derived table from this table
+     */
     @Override
-    public Row6<String, UUID, JSONB, JSONB, UUID, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public ScenarioRouteDefinition where(Condition condition) {
+        return new ScenarioRouteDefinition(getQualifiedName(), aliased() ? this : null, null, condition);
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     * Create an inline derived table from this table
      */
-    public <U> SelectField<U> mapping(Function6<? super String, ? super UUID, ? super JSONB, ? super JSONB, ? super UUID, ? super String, ? extends U> from) {
-        return convertFrom(Records.mapping(from));
+    @Override
+    public ScenarioRouteDefinition where(Collection<? extends Condition> conditions) {
+        return where(DSL.and(conditions));
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
+     * Create an inline derived table from this table
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function6<? super String, ? super UUID, ? super JSONB, ? super JSONB, ? super UUID, ? super String, ? extends U> from) {
-        return convertFrom(toType, Records.mapping(from));
+    @Override
+    public ScenarioRouteDefinition where(Condition... conditions) {
+        return where(DSL.and(conditions));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public ScenarioRouteDefinition where(Field<Boolean> condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public ScenarioRouteDefinition where(SQL condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public ScenarioRouteDefinition where(@Stringly.SQL String condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public ScenarioRouteDefinition where(@Stringly.SQL String condition, Object... binds) {
+        return where(DSL.condition(condition, binds));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public ScenarioRouteDefinition where(@Stringly.SQL String condition, QueryPart... parts) {
+        return where(DSL.condition(condition, parts));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public ScenarioRouteDefinition whereExists(Select<?> select) {
+        return where(DSL.exists(select));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public ScenarioRouteDefinition whereNotExists(Select<?> select) {
+        return where(DSL.notExists(select));
     }
 }
