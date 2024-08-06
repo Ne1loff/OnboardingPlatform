@@ -17,7 +17,7 @@ export function generateActionDataByType(type: ActionFlowNodeType): ActionType {
                 name: "Изменить сценарий",
                 id: crypto.randomUUID(),
                 nextActionId: null,
-                nextScenariosId: EMPTY_STRIGN,
+                nextScenarioRouteDefinitionId: EMPTY_STRIGN,
                 startFromBegin: false
             } satisfies ChangeScenariosActionType;
         case ActionFlowNodeType.FORWARD_MESSAGE:

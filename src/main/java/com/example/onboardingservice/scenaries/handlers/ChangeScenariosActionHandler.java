@@ -1,8 +1,6 @@
 package com.example.onboardingservice.scenaries.handlers;
 
 import com.example.onboardingservice.scenaries.ActionContext;
-import com.example.onboardingservice.scenaries.ContextConstants;
-import com.example.onboardingservice.scenaries.ScenarioService;
 import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import com.example.onboardingservice.scenaries.actions.impl.ChangeScenariosAction;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +16,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChangeScenariosActionHandler implements ActionHandler<ChangeScenariosAction> {
 
-    private final ScenarioService service;
-
     @Override
     public Class<ChangeScenariosAction> getHandledClass() {
         return ChangeScenariosAction.class;
@@ -27,9 +23,9 @@ public class ChangeScenariosActionHandler implements ActionHandler<ChangeScenari
 
     @Override
     public Optional<UUID> process(ChangeScenariosAction action, AbsSender sender, Update update, ActionContext context, ScenariosMetadata metadata) throws TelegramApiException {
-        context.put(ContextConstants.SCENARIOS_ID, action.getNextScenariosId());
-        context.put(ContextConstants.NEED_INIT, true);
-        context.put(ContextConstants.START_FROM_BEGIN, action.isStartFromBegin());
+        context.setNextScenarioRouteDefinitionId(action.getNextScenarioRouteDefinitionId());
+        context.setInitNextScenarios(true);
+        context.setStartFromBegin(action.isStartFromBegin());
 
         return action.getNextActionId();
     }

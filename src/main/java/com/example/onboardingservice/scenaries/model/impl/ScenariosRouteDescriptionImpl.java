@@ -1,12 +1,12 @@
 package com.example.onboardingservice.scenaries.model.impl;
 
 import com.example.onboardingservice.scenaries.ActionContext;
-import com.example.onboardingservice.scenaries.ContextConstants;
 import com.example.onboardingservice.scenaries.ScenariosRoute;
 import com.example.onboardingservice.scenaries.model.ScenariosRouteDescription;
 import com.example.onboardingservice.scenaries.model.enumeration.ScenariosStatus;
 import lombok.Data;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -22,8 +22,9 @@ public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription 
     @Override
     public ScenariosRoute build(ActionContext context) {
 
-        if (context.containsKey(ContextConstants.SCENARIOS_ID)) {
-            if (id.equals(UUID.fromString(context.get(ContextConstants.SCENARIOS_ID)))) {
+        var nextScenariosIdOptional = Optional.ofNullable(context.getNextScenarioRouteDefinitionId());
+        if (nextScenariosIdOptional.isPresent()) {
+            if (id.equals(nextScenariosIdOptional.get())) {
                 return ScenariosRouteImpl.builder()
                         .withFirstActionId(firstActionId)
                         .withActions(route.getActions())
@@ -34,7 +35,7 @@ public class ScenariosRouteDescriptionImpl implements ScenariosRouteDescription 
             }
         }
 
-        if (status == ScenariosStatus.TEST && !Boolean.parseBoolean(context.get(ContextConstants.INCLUDE_TEST_SCENARIOS))) {
+        if (status == ScenariosStatus.TEST && !context.isIncludeTestScenarios()) {
             return null;
         }
 

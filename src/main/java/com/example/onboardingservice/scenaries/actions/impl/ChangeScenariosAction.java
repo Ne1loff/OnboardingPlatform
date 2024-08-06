@@ -11,6 +11,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ChangeScenariosAction extends AbstractAction {
-    private UUID nextScenariosId;
+    private UUID nextScenarioRouteDefinitionId;
     private boolean startFromBegin;
 }

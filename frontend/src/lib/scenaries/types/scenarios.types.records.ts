@@ -13,7 +13,7 @@ export const ChangeScenariosActionRecord = Record({
     id: String,
     name: String,
     nextActionId: String.nullable(),
-    nextScenariosId: String.nullable(),
+    nextScenarioRouteDefinitionId: String.nullable(),
     startFromBegin: Boolean,
 });
 

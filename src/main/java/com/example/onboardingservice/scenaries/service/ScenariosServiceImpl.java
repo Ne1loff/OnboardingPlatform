@@ -3,7 +3,6 @@ package com.example.onboardingservice.scenaries.service;
 import com.example.onboardingservice.jooq.tables.pojos.ScenarioRouteDefinition;
 import com.example.onboardingservice.jooq.tables.records.ScenarioRecord;
 import com.example.onboardingservice.scenaries.ActionContext;
-import com.example.onboardingservice.scenaries.ContextConstants;
 import com.example.onboardingservice.scenaries.ScenarioService;
 import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import com.example.onboardingservice.scenaries.model.ScenariosRouteDescription;
@@ -36,7 +35,7 @@ public class ScenariosServiceImpl implements ScenarioService {
 
     @Override
     public ActionContext buildContext(Long chatId) {
-        return ActionContextImpl.of(chatId);
+        return ActionContext.of(chatId);
     }
 
     @NotNull
@@ -61,12 +60,27 @@ public class ScenariosServiceImpl implements ScenarioService {
             return null;
         }
 
+        try {
+            var newScenarios = initializeScenarios(context);
+            var newContext = ActionContext.of(context.getChatId());
+            newContext.setActionId(newScenarios.getRoute().getFirstActionId());
+
+            context.setNextScenarioRouteDefinitionId(newScenarios.getScenarioId());
+            context.setStartFromBegin(true);
+            context.restore(findActiveContext(context.getChatId()));
+
+            saveScenariosMetadata(newContext, newScenarios);
+            return changeScenarios(context, scenarios);
+        } catch (IllegalStateException ignore) {
+            // нет запроса нового сценария
+        }
+
         var definition = jooq.selectFrom(SCENARIO_ROUTE_DEFINITION)
                 .where(SCENARIO_ROUTE_DEFINITION.ID.eq(scenarios.getRouteId()))
                 .fetchOptionalInto(ScenarioRouteDefinition.class)
                 .orElseThrow();
 
-        var includeTest = Boolean.parseBoolean(context.getParameters().getOrDefault(ContextConstants.INCLUDE_TEST_SCENARIOS, "false"));
+        var includeTest = context.isIncludeTestScenarios();
         return switch (ScenariosStatus.valueOf(definition.getStatus())) {
             case TEST -> includeTest ? scenarios : null;
             case PUBLISHED -> scenarios;
@@ -79,7 +93,7 @@ public class ScenariosServiceImpl implements ScenarioService {
         return jooq.select(SCENARIO.CONTEXT).from(SCENARIO)
                 .where(SCENARIO.CHAT_ID.eq(chatId).and(SCENARIO.IS_ACTIVE))
                 .fetchOptional()
-                .map(it -> JooqUtils.fromJsonb(it.get(SCENARIO.CONTEXT), ActionContextImpl.class))
+                .map(it -> JooqUtils.fromJsonb(it.get(SCENARIO.CONTEXT), ActionContext.class))
                 .orElse(null);
     }
 
@@ -91,11 +105,11 @@ public class ScenariosServiceImpl implements ScenarioService {
                 .set(SCENARIO.ROUTE_DEFINITION_ID, metadata.getRouteId())
                 .set(SCENARIO.CHAT_ID, context.getChatId())
                 .set(SCENARIO.FIRST_ACTION_ID, metadata.getRoute().getFirstActionId())
-                .set(SCENARIO.CURRENT_ACTION_ID, UUID.fromString(context.get(ContextConstants.ACTION_ID)))
+                .set(SCENARIO.CURRENT_ACTION_ID, context.getActionId())
                 .set(SCENARIO.CONTEXT, JooqUtils.toJsonb(context))
                 .set(SCENARIO.IS_ACTIVE, true)
                 .onDuplicateKeyUpdate()
-                .set(SCENARIO.CURRENT_ACTION_ID, UUID.fromString(context.get(ContextConstants.ACTION_ID)))
+                .set(SCENARIO.CURRENT_ACTION_ID, context.getActionId())
                 .set(SCENARIO.CONTEXT, JooqUtils.toJsonb(context))
                 .set(SCENARIO.IS_ACTIVE, true)
                 .execute();
@@ -104,18 +118,18 @@ public class ScenariosServiceImpl implements ScenarioService {
     @Override
     public ScenariosMetadata changeScenarios(ActionContext context, ScenariosMetadata metadata) {
         jooq.update(SCENARIO)
-                .set(SCENARIO.CURRENT_ACTION_ID, UUID.fromString(context.get(ContextConstants.ACTION_ID)))
+                .set(SCENARIO.CURRENT_ACTION_ID, context.getActionId())
                 .set(SCENARIO.CONTEXT, JooqUtils.toJsonb(context))
                 .set(SCENARIO.IS_ACTIVE, false)
                 .where(SCENARIO.ID.eq(metadata.getScenarioId()))
                 .execute();
 
         var newScenariosMetadata = findScenariosMetadata(it -> it.where(SCENARIO.CHAT_ID.eq(context.getChatId())
-                .and(SCENARIO.ID.eq(UUID.fromString(context.get(ContextConstants.SCENARIOS_ID))))));
+                .and(SCENARIO.ID.eq(context.getNextScenarioRouteDefinitionId()))));
 
         if (newScenariosMetadata == null) {
             newScenariosMetadata = initializeScenarios(context);
-        } else if (Optional.ofNullable(context.get(ContextConstants.START_FROM_BEGIN)).map(Boolean::parseBoolean).orElse(false)) {
+        } else if (Optional.ofNullable(context.getStartFromBegin()).orElse(false)) {
             var route = newScenariosMetadata.getRoute();
             route.next(route.getFirstActionId());
         }

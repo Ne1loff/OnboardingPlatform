@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @Component
 public class SendMessageActionHandler implements ActionHandler<SendMessageAction> {
 
-    public static final Pattern PROPERTY_PATTERN = Pattern.compile("(?<!\\\\)\\$[a-zA-Z_]*");
+    public static final Pattern PROPERTY_PATTERN = Pattern.compile("(?<!\\\\)\\$([a-zA-Z_]*)", Pattern.MULTILINE);
 
     @Override
     public Class<SendMessageAction> getHandledClass() {
@@ -57,17 +57,18 @@ public class SendMessageActionHandler implements ActionHandler<SendMessageAction
     private String replaceProperties(String message, ActionContext context) {
         var matcher = PROPERTY_PATTERN.matcher(message);
 
-        var sb = new StringBuilder(message);
+        var sb = new StringBuilder();
         while (matcher.find()) {
-            var propertyName = message.substring(matcher.start() + 1, matcher.end());
+            var propertyName = matcher.group(1);
             var property = context.get(propertyName);
 
             if (property == null) {
                 throw new IllegalStateException("Defined property does not contains in context");
             }
 
-            sb.replace(matcher.start(), matcher.end(), property);
+            matcher.appendReplacement(sb, property);
         }
+        matcher.appendTail(sb);
 
         return sb.toString();
     }

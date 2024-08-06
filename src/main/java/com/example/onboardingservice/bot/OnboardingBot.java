@@ -2,7 +2,6 @@ package com.example.onboardingservice.bot;
 
 import com.example.onboardingservice.config.properties.TelegramBotProperties;
 import com.example.onboardingservice.scenaries.ActionContext;
-import com.example.onboardingservice.scenaries.ContextConstants;
 import com.example.onboardingservice.scenaries.ScenarioService;
 import com.example.onboardingservice.scenaries.ScenariosMetadata;
 import com.example.onboardingservice.scenaries.actions.Action;
@@ -16,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -58,8 +60,7 @@ public class OnboardingBot extends TelegramLongPollingBot {
             chatId = callbackData.chatId();
             context = scenarioService.buildContext(chatId);
 
-            context.put(ContextConstants.CHAT_ID, chatId);
-            context.put(ContextConstants.ACTION_ID, callbackData.actionId());
+            context.setActionId(callbackData.actionId());
 
         } else {
             final var messageText = update.getMessage().getText();
@@ -71,8 +72,7 @@ public class OnboardingBot extends TelegramLongPollingBot {
             context.put(eventType.name(), messageText);
         }
 
-        final var isTestUser = hrsService.isHrChatId(context.getChatId());
-        context.put(ContextConstants.INCLUDE_TEST_SCENARIOS, isTestUser);
+        context.setIncludeTestScenarios(hrsService.isHrChatId(context.getChatId()));
 
         //FIXME: переключать сценарии по запросу
         metadata = scenarioService.findActiveScenariosMetadata(context);
@@ -84,8 +84,7 @@ public class OnboardingBot extends TelegramLongPollingBot {
         }
 
         var route = metadata.getRoute();
-        var action = Optional.ofNullable(context.get(ContextConstants.ACTION_ID))
-                .map(UUID::fromString)
+        var action = Optional.ofNullable(context.getActionId())
                 .filter(route::hasAction)
                 .map(route::next)
                 .orElse(route.current());
@@ -93,7 +92,7 @@ public class OnboardingBot extends TelegramLongPollingBot {
         try {
             boolean hasNext;
             do {
-                context.put(ContextConstants.ACTION_ID, action.getId());
+                context.setActionId(action.getId());
                 scenarioService.saveScenariosMetadata(context, metadata);
 
                 var handler = actionHandlers.get(action.getClass());
@@ -104,9 +103,9 @@ public class OnboardingBot extends TelegramLongPollingBot {
                     action = route.next(nextActionId.get());
                 }
 
-                if (context.containsKey(ContextConstants.NEED_INIT) && Boolean.parseBoolean(context.get(ContextConstants.NEED_INIT))) {
-                    context.put(ContextConstants.ACTION_ID, action.getId());
-                    context.put(ContextConstants.NEED_INIT, false);
+                if (Boolean.TRUE.equals(context.getInitNextScenarios())) {
+                    context.setActionId(action.getId());
+                    context.setInitNextScenarios(false);
 
                     metadata = scenarioService.changeScenarios(context, metadata);
                     context = scenarioService.findActiveContext(chatId);

@@ -1,17 +1,69 @@
 package com.example.onboardingservice.scenaries;
 
+import lombok.*;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-public interface ActionContext {
-    Long getChatId();
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class ActionContext {
+    private Long chatId;
+    @Nullable
+    private UUID actionId;
+    @Nullable
+    private Boolean startFromBegin;
+    @Nullable
+    private Boolean initNextScenarios;
+    @Nullable
+    private UUID nextScenarioRouteDefinitionId;
+    private boolean includeTestScenarios;
+    private Map<String, String> parameters;
 
-    String get(String key);
+    public ActionContext(Long chatId) {
+        this.chatId = chatId;
+        this.parameters = new HashMap<>();
+    }
 
-    Map<String, String> getParameters();
+    public static ActionContext of(Long chatId) {
+        return new ActionContext(chatId);
+    }
 
-    void put(String key, Object value);
+    public String get(String key) {
+        return parameters.get(key);
+    }
 
-    boolean containsKey(String key);
+    public void put(String key, Object value) {
+        parameters.put(key, String.valueOf(value));
+    }
 
-    ActionContext restore(ActionContext context);
+    public boolean containsKey(String key) {
+        return parameters.containsKey(key);
+    }
+
+    public ActionContext restore(ActionContext context) {
+        if (context == null) {
+            return this;
+        }
+        if (this.actionId == null) {
+            this.actionId = context.actionId;
+        }
+        if (this.nextScenarioRouteDefinitionId == null) {
+            this.nextScenarioRouteDefinitionId = context.nextScenarioRouteDefinitionId;
+        }
+        if (this.startFromBegin == null) {
+            this.startFromBegin = context.startFromBegin;
+        }
+        if (this.initNextScenarios == null) {
+            this.initNextScenarios = context.initNextScenarios;
+        }
+        this.includeTestScenarios = context.includeTestScenarios;
+
+        context.getParameters().forEach((key, value) -> parameters.computeIfAbsent(key, (it) -> value));
+        return this;
+    }
 }

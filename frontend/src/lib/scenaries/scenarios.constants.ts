@@ -61,28 +61,28 @@ export const mainScenaries: ScenariosType = {
                 "id": "339a9c70-af30-48b6-8b89-ccb9f06075e4",
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Запустить сценарий - Задать вопрос",
-                "nextScenariosId": "1991fe8d-186f-4dc3-bc32-58a51bc9b60d",
+                "nextScenarioRouteDefinitionId": "1991fe8d-186f-4dc3-bc32-58a51bc9b60d",
                 "startFromBegin": true
             },
             {
                 "id": "629c7a2a-d36a-4c55-8157-0bb99e8958d2",
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Запустить сценарий - Контакты HR",
-                "nextScenariosId": null,
+                "nextScenarioRouteDefinitionId": null,
                 "startFromBegin": true
             },
             {
                 "id": "72b196c1-032f-46ba-a81e-2717b3722d55",
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Запустить сценарий - Документы",
-                "nextScenariosId": "d3de6e5c-9d52-4be0-a9b9-b936f41f66ca",
+                "nextScenarioRouteDefinitionId": "d3de6e5c-9d52-4be0-a9b9-b936f41f66ca",
                 "startFromBegin": true
             },
             {
                 "id": "0362ab74-20c1-44e5-82ee-ef77c9999b29",
                 "nextActionId": "c860953b-9043-4464-b98b-82f0e6723059",
                 "name": "Запустить сценарий - Как пройти",
-                "nextScenariosId": null,
+                "nextScenarioRouteDefinitionId": null,
                 "startFromBegin": true
             },
         ]
@@ -135,7 +135,7 @@ export const documentsScenarios: ScenariosType = {
                 "id": "3e7f650d-1c13-4a39-bb56-188304222fb7",
                 "nextActionId": null,
                 "name": "Запустить сценарий - Главное меню",
-                "nextScenariosId": "fb2c044a-ff40-41b2-beda-91c8ca3040ff",
+                "nextScenarioRouteDefinitionId": "fb2c044a-ff40-41b2-beda-91c8ca3040ff",
                 "startFromBegin": false
             }
         ]
@@ -189,7 +189,7 @@ export const questionScenarios: ScenariosType = {
                 "id": "3e7f650d-1c13-4a39-bb56-188304222fb7",
                 "nextActionId": null,
                 "name": "Запустить сценарий - Главное меню",
-                "nextScenariosId": "fb2c044a-ff40-41b2-beda-91c8ca3040ff",
+                "nextScenarioRouteDefinitionId": "fb2c044a-ff40-41b2-beda-91c8ca3040ff",
                 "startFromBegin": false
             }
         ]
